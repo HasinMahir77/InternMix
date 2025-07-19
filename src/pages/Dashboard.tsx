@@ -1,6 +1,6 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, Link } from 'react-router-dom';
 import { Users, Briefcase, Calendar, TrendingUp } from 'lucide-react';
 
 const Dashboard = () => {
@@ -10,7 +10,7 @@ const Dashboard = () => {
     return <Navigate to="/login" replace />;
   }
 
-  const isStudent = currentUser === 'student';
+  const isStudent = currentUser === 'Mahir';
 
   return (
     <div className="min-h-screen pt-16 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
@@ -111,12 +111,12 @@ const Dashboard = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             {isStudent ? (
               <>
-                <button className="bg-primary-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors">
+                <Link to="/internships" className="bg-primary-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors text-center">
                   Browse Internships
-                </button>
-                <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                </Link>
+                <Link to="/profile" className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center">
                   Update Profile
-                </button>
+                </Link>
                 <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   View Applications
                 </button>

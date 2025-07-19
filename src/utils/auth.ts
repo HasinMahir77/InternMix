@@ -1,7 +1,7 @@
 // Simple cookie-based authentication utility
 
 const DUMMY_USERS = {
-  student: 'student',
+  Mahir: 'Mahir',
   recruiter: 'recruiter'
 };
 

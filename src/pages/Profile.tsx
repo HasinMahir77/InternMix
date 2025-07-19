@@ -2,20 +2,21 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Edit3, Camera } from 'lucide-react';
+import profilePic from '../dummy-assets/Student/dp.jpg';
 
 const Profile = () => {
   const { isAuthenticated } = useAuth();
   const [isEditing, setIsEditing] = useState(false);
   const [profile, setProfile] = useState({
-    firstName: 'John',
-    lastName: 'Doe',
-    phone: '123-456-7890',
+    firstName: 'Hasin',
+    lastName: 'Mahir',
+    phone: '+880-1741238814',
     address: '123 Main St, Anytown, USA',
-    email: 'john.doe@example.com',
-    institution: 'University of Example',
+    email: 'hasinmahir@gmail.com',
+    institution: 'Independent University, Bangladesh',
     major: 'Computer Science',
-    cgpa: '3.8',
-    profilePicture: 'https://via.placeholder.com/150',
+    cgpa: '3.78',
+    profilePicture: profilePic,
   });
 
   if (!isAuthenticated) {

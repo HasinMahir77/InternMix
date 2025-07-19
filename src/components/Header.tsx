@@ -8,7 +8,7 @@ const Header = () => {
   const location = useLocation();
   const { isAuthenticated, currentUser, logout } = useAuth();
 
-  const isStudent = currentUser === 'student';
+  const isStudent = currentUser === 'Mahir';
 
   const defaultNavigation = [
     { name: 'Home', href: '/' },
