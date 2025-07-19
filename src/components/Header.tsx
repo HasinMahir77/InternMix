@@ -8,14 +8,39 @@ const Header = () => {
   const location = useLocation();
   const { isAuthenticated, currentUser, logout } = useAuth();
 
-  const navigation = [
-    !isAuthenticated?{ name: 'Home', href: '/' }:{},
-    ...(isAuthenticated ? [{ name: 'Dashboard', href: '/dashboard' }] : []),
+  const isStudent = currentUser === 'student';
+
+  const defaultNavigation = [
+    { name: 'Home', href: '/' },
     { name: 'For Students', href: '/students' },
     { name: 'For Companies', href: '/companies' },
     { name: 'About', href: '/about' },
     { name: 'Contact', href: '/contact' },
   ];
+
+  const studentNavigation = [
+    { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Profile', href: '/profile' },
+    { name: 'Resume', href: '/resume' },
+    { name: 'Internships', href: '/internships' },
+    { name: 'Chat', href: '/chat' },
+  ];
+  
+  const recruiterNavigation = [
+    { name: 'Dashboard', href: '/dashboard' },
+  ];
+
+  const getNavigation = () => {
+    if (isAuthenticated) {
+      if (isStudent) {
+        return studentNavigation;
+      }
+      return recruiterNavigation;
+    }
+    return defaultNavigation;
+  };
+
+  const navigation = getNavigation();
 
   const isActive = (path: string) => location.pathname === path;
 
@@ -56,7 +81,7 @@ const Header = () => {
               <div className="flex items-center space-x-3">
                 <div className="flex items-center space-x-2">
                   <User className="h-4 w-4 text-gray-600" />
-                  <span className="text-sm font-medium text-gray-700">
+                  <span className="text-sm font-medium text-gray-700 capitalize">
                     {currentUser}
                   </span>
                 </div>
@@ -118,7 +143,7 @@ const Header = () => {
                   <>
                     <div className="flex items-center space-x-2 px-3 py-2">
                       <User className="h-4 w-4 text-gray-600" />
-                      <span className="text-sm font-medium text-gray-700">
+                      <span className="text-sm font-medium text-gray-700 capitalize">
                         {currentUser}
                       </span>
                     </div>

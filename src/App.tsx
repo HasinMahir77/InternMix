@@ -7,6 +7,10 @@ import Signup from './pages/Signup';
 import About from './pages/About';
 import Contact from './pages/Contact';
 import Dashboard from './pages/Dashboard';
+import Profile from './pages/Profile';
+import Resume from './pages/Resume';
+import Internships from './pages/Internships';
+import Chat from './pages/Chat';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -18,12 +22,16 @@ function App() {
           <Header />
           <main>
             <Routes>
-                          <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/contact" element={<Contact />} />
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/dashboard" element={<Dashboard />} />
+              <Route path="/profile" element={<Profile />} />
+              <Route path="/resume" element={<Resume />} />
+              <Route path="/internships" element={<Internships />} />
+              <Route path="/chat" element={<Chat />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/contact" element={<Contact />} />
             </Routes>
           </main>
           <Footer />

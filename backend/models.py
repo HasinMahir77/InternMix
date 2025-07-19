@@ -7,7 +7,7 @@ class Intern(BaseModel):
     phone_num: str
     address: str
     email: str
-    university: str
+    institution: str
     major: str
     cgpa: float
     password_hash: str
