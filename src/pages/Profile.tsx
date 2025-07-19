@@ -14,6 +14,7 @@ const Profile = () => {
     address: '123 Main St, Anytown, USA',
     email: 'hasinmahir@gmail.com',
     institution: 'Independent University, Bangladesh',
+    degree: 'Bachelors',
     major: 'Computer Science',
     cgpa: '3.78',
     profilePicture: profilePic,
@@ -23,7 +24,7 @@ const Profile = () => {
     return <Navigate to="/login" replace />;
   }
   
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setProfile({ ...profile, [e.target.name]: e.target.value });
   };
 
@@ -124,6 +125,18 @@ const Profile = () => {
                     <input type="text" name="institution" value={profile.institution} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" />
                   ) : (
                     <p className="mt-1 text-lg text-gray-800">{profile.institution}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500">Degree</label>
+                  {isEditing ? (
+                    <select name="degree" value={profile.degree} onChange={handleChange} className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500">
+                      <option value="Bachelors">Bachelors</option>
+                      <option value="Masters">Masters</option>
+                      <option value="Diploma">Diploma</option>
+                    </select>
+                  ) : (
+                    <p className="mt-1 text-lg text-gray-800">{profile.degree}</p>
                   )}
                 </div>
                 <div>

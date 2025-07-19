@@ -45,6 +45,15 @@ const internships = [
 const Internships = () => {
   const { isAuthenticated } = useAuth();
   const [selectedInternship, setSelectedInternship] = useState(internships[0]);
+  const [appliedInternships, setAppliedInternships] = useState<Set<string>>(new Set());
+
+  const handleApply = (internshipTitle: string) => {
+    setAppliedInternships(prev => new Set([...prev, internshipTitle]));
+  };
+
+  const isApplied = (internshipTitle: string) => {
+    return appliedInternships.has(internshipTitle);
+  };
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -114,9 +123,17 @@ const Internships = () => {
                 </div>
 
                 <div className="flex items-center space-x-4">
-                  <button className="flex-1 bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors flex items-center justify-center space-x-2">
+                  <button 
+                    onClick={() => handleApply(selectedInternship.title)}
+                    disabled={isApplied(selectedInternship.title)}
+                    className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
+                      isApplied(selectedInternship.title)
+                        ? 'bg-green-600 text-white cursor-not-allowed'
+                        : 'bg-primary-600 text-white hover:bg-primary-700'
+                    }`}
+                  >
                     <CheckCircle className="h-5 w-5"/>
-                    <span>Apply Now</span>
+                    <span>{isApplied(selectedInternship.title) ? 'Applied' : 'Apply Now'}</span>
                   </button>
                   <button className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
                     <ExternalLink className="h-5 w-5"/>
