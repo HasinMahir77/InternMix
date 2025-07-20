@@ -126,9 +126,9 @@ const Dashboard = () => {
                 <Link to="/listings" className="text-center bg-primary-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors">
                   Post New Internship
                 </Link>
-                <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
-                  Review Applications
-                </button>
+                <Link to="/listings" className="text-center bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                  View Listings
+                </Link>
                 <Link to="/org-profile" className="text-center bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   Manage Company Profile
                 </Link>

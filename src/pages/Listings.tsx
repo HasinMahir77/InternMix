@@ -1,7 +1,20 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { PlusCircle, Archive, Pen, RotateCcw } from 'lucide-react';
+import { PlusCircle, Archive, Pen, RotateCcw, X, Check, Clock, XCircle, Users } from 'lucide-react';
+import profilePic from '../dummy-assets/Student/dp.jpg';
+
+type ApplicationStatus = 'pending' | 'accepted' | 'waitlisted' | 'rejected';
+
+interface Applicant {
+  id: number;
+  name: string;
+  university: string;
+  major: string;
+  similarity: number;
+  status: ApplicationStatus;
+  profilePicture: string;
+}
 
 interface Listing {
   id: number;
@@ -11,6 +24,7 @@ interface Listing {
   duration: string;
   deadline: string;
   archived: boolean;
+  applicants: Applicant[];
 }
 
 const Listings: React.FC = () => {
@@ -25,6 +39,11 @@ const Listings: React.FC = () => {
       duration: '12 Weeks',
       deadline: '2024-08-15',
       archived: false,
+      applicants: [
+        { id: 101, name: 'Alice Johnson', university: 'Stanford University', major: 'Computer Science', similarity: 92, status: 'pending', profilePicture: profilePic },
+        { id: 102, name: 'Bob Williams', university: 'MIT', major: 'Electrical Engineering', similarity: 88, status: 'pending', profilePicture: profilePic },
+        { id: 103, name: 'Charlie Brown', university: 'UC Berkeley', major: 'Design', similarity: 75, status: 'pending', profilePicture: profilePic },
+      ],
     },
     {
       id: 2,
@@ -34,6 +53,10 @@ const Listings: React.FC = () => {
       duration: '16 Weeks',
       deadline: '2024-09-01',
       archived: false,
+      applicants: [
+        { id: 201, name: 'Diana Prince', university: 'Carnegie Mellon', major: 'Statistics', similarity: 95, status: 'pending', profilePicture: profilePic },
+        { id: 202, name: 'Eve Adams', university: 'University of Washington', major: 'Informatics', similarity: 85, status: 'pending', profilePicture: profilePic },
+      ],
     },
     {
       id: 3,
@@ -43,6 +66,7 @@ const Listings: React.FC = () => {
       duration: '10 Weeks',
       deadline: '2024-08-30',
       archived: false,
+      applicants: [],
     },
   ]);
   const [formData, setFormData] = useState({
@@ -53,6 +77,8 @@ const Listings: React.FC = () => {
     deadline: '',
   });
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [selectedListing, setSelectedListing] = useState<Listing | null>(null);
 
   if (!isAuthenticated || userType !== 'recruiter') {
     return <Navigate to="/login" replace />;
@@ -85,6 +111,7 @@ const Listings: React.FC = () => {
       duration: formData.duration.trim(),
       deadline: formData.deadline,
       archived: false,
+      applicants: editingId ? listings.find(l => l.id === editingId)?.applicants || [] : [],
     };
 
     setListings((prev) => {
@@ -112,6 +139,26 @@ const Listings: React.FC = () => {
     setListings((prev) =>
       prev.map((l) => (l.id === id ? { ...l, archived: !l.archived } : l))
     );
+  };
+
+  const handleViewApplicants = (listing: Listing) => {
+    setSelectedListing(listing);
+    setIsModalOpen(true);
+  };
+  
+  const updateApplicantStatus = (applicantId: number, status: ApplicationStatus) => {
+    if (!selectedListing) return;
+
+    const updatedApplicants = selectedListing.applicants.map(applicant => 
+      applicant.id === applicantId ? { ...applicant, status } : applicant
+    );
+    
+    const updatedListings = listings.map(listing => 
+      listing.id === selectedListing.id ? { ...listing, applicants: updatedApplicants } : listing
+    );
+    
+    setListings(updatedListings);
+    setSelectedListing(prev => prev ? { ...prev, applicants: updatedApplicants } : null);
   };
 
   const activeListings = listings.filter((l) => !l.archived);
@@ -225,19 +272,27 @@ const Listings: React.FC = () => {
                       <p className="text-sm text-gray-500">Duration: {listing.duration}</p>
                       <p className="text-sm text-gray-500">Deadline: {listing.deadline}</p>
                     </div>
-                    <div className="flex flex-col space-y-2">
+                    <div className="flex flex-col space-y-2 items-end">
                       <button
-                        onClick={() => handleEdit(listing)}
-                        className="inline-flex items-center px-3 py-1.5 text-sm bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100"
+                        onClick={() => handleViewApplicants(listing)}
+                        className="inline-flex items-center justify-center px-4 py-2 text-sm bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 w-40"
                       >
-                        <Pen className="h-4 w-4 mr-1" /> Edit
+                        <Users className="h-4 w-4 mr-1" /> View Applications ({listing.applicants.length})
                       </button>
-                      <button
-                        onClick={() => toggleArchive(listing.id)}
-                        className="inline-flex items-center px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100"
-                      >
-                        <Archive className="h-4 w-4 mr-1" /> Archive
-                      </button>
+                      <div className="flex space-x-2">
+                        <button
+                          onClick={() => handleEdit(listing)}
+                          className="inline-flex items-center px-3 py-1.5 text-sm bg-primary-50 text-primary-700 rounded-lg hover:bg-primary-100"
+                        >
+                          <Pen className="h-4 w-4 mr-1" /> Edit
+                        </button>
+                        <button
+                          onClick={() => toggleArchive(listing.id)}
+                          className="inline-flex items-center px-3 py-1.5 text-sm bg-red-50 text-red-700 rounded-lg hover:bg-red-100"
+                        >
+                          <Archive className="h-4 w-4 mr-1" /> Archive
+                        </button>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -277,6 +332,66 @@ const Listings: React.FC = () => {
           )}
         </div>
       </div>
+
+      {isModalOpen && selectedListing && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+          <div className="bg-white rounded-xl shadow-2xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+            <div className="p-6 border-b flex justify-between items-center">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">Applicants for {selectedListing.title}</h2>
+                <p className="text-gray-600">{selectedListing.applicants.length} candidates</p>
+              </div>
+              <button onClick={() => setIsModalOpen(false)} className="p-2 rounded-full hover:bg-gray-100">
+                <X className="h-6 w-6 text-gray-600" />
+              </button>
+            </div>
+            <div className="flex-1 overflow-y-auto p-6">
+              <div className="space-y-4">
+                {selectedListing.applicants.sort((a, b) => b.similarity - a.similarity).map(applicant => (
+                  <div key={applicant.id} className="bg-gray-50 border border-gray-200 rounded-lg p-4 flex items-center space-x-4">
+                    <img src={applicant.profilePicture} alt={applicant.name} className="h-16 w-16 rounded-full object-cover"/>
+                    <div className="flex-1">
+                      <div className="flex justify-between items-center">
+                        <h3 className="text-lg font-bold text-gray-800">{applicant.name}</h3>
+                        <p className="text-sm font-semibold text-primary-600">
+                          {applicant.similarity}% Match
+                        </p>
+                      </div>
+                      <p className="text-sm text-gray-600">{applicant.university} - {applicant.major}</p>
+                    </div>
+                    <div className="flex space-x-2">
+                      <button
+                        onClick={() => updateApplicantStatus(applicant.id, 'accepted')}
+                        className={`p-2 rounded-full transition-colors ${
+                          applicant.status === 'accepted' ? 'bg-green-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-green-200'
+                        }`}
+                      >
+                        <Check className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => updateApplicantStatus(applicant.id, 'waitlisted')}
+                        className={`p-2 rounded-full transition-colors ${
+                          applicant.status === 'waitlisted' ? 'bg-yellow-500 text-white' : 'bg-gray-200 text-gray-600 hover:bg-yellow-200'
+                        }`}
+                      >
+                        <Clock className="h-5 w-5" />
+                      </button>
+                      <button
+                        onClick={() => updateApplicantStatus(applicant.id, 'rejected')}
+                        className={`p-2 rounded-full transition-colors ${
+                          applicant.status === 'rejected' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-600 hover:bg-red-200'
+                        }`}
+                      >
+                        <XCircle className="h-5 w-5" />
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
