@@ -13,6 +13,7 @@ import Internships from './pages/Internships';
 import Applications from './pages/Applications';
 import OrgProfile from './pages/OrgProfile';
 import Chat from './pages/Chat';
+import Listings from './pages/Listings';
 import { AuthProvider } from './context/AuthContext';
 
 function App() {
@@ -32,6 +33,7 @@ function App() {
               <Route path="/org-profile" element={<OrgProfile />} />
               <Route path="/resume" element={<Resume />} />
               <Route path="/internships" element={<Internships />} />
+              <Route path="/listings" element={<Listings />} />
               <Route path="/applications" element={<Applications />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/about" element={<About />} />

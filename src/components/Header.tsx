@@ -28,6 +28,7 @@ const Header = () => {
   const recruiterNavigation = [
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Profile', href: '/org-profile' },
+    { name: 'Listings', href: '/listings' },
   ];
 
   const getNavigation = () => {

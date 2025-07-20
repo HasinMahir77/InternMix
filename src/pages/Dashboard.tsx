@@ -123,9 +123,9 @@ const Dashboard = () => {
               </>
             ) : (
               <>
-                <button className="bg-primary-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors">
+                <Link to="/listings" className="text-center bg-primary-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors">
                   Post New Internship
-                </button>
+                </Link>
                 <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   Review Applications
                 </button>
