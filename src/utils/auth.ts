@@ -2,7 +2,17 @@
 
 const DUMMY_USERS = {
   Mahir: 'Mahir',
-  recruiter: 'recruiter'
+  recruiter: 'recruiter',
+  company: 'company',
+};
+
+export type UserType = 'student' | 'recruiter';
+
+export const getUserType = (username: string | null): UserType => {
+  if (username === 'company' || username === 'recruiter') {
+    return 'recruiter';
+  }
+  return 'student';
 };
 
 // Cookie utility functions

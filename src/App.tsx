@@ -11,6 +11,7 @@ import Profile from './pages/Profile';
 import Resume from './pages/Resume';
 import Internships from './pages/Internships';
 import Applications from './pages/Applications';
+import OrgProfile from './pages/OrgProfile';
 import Chat from './pages/Chat';
 import { AuthProvider } from './context/AuthContext';
 
@@ -28,6 +29,7 @@ function App() {
               <Route path="/signup" element={<Signup />} />
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/profile" element={<Profile />} />
+              <Route path="/org-profile" element={<OrgProfile />} />
               <Route path="/resume" element={<Resume />} />
               <Route path="/internships" element={<Internships />} />
               <Route path="/applications" element={<Applications />} />

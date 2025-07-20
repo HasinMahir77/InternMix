@@ -6,9 +6,7 @@ import { useAuth } from '../context/AuthContext';
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const location = useLocation();
-  const { isAuthenticated, currentUser, logout } = useAuth();
-
-  const isStudent = currentUser === 'Mahir';
+  const { isAuthenticated, currentUser, userType, logout } = useAuth();
 
   const defaultNavigation = [
     { name: 'Home', href: '/' },
@@ -29,11 +27,12 @@ const Header = () => {
   
   const recruiterNavigation = [
     { name: 'Dashboard', href: '/dashboard' },
+    { name: 'Profile', href: '/org-profile' },
   ];
 
   const getNavigation = () => {
     if (isAuthenticated) {
-      if (isStudent) {
+      if (userType === 'student') {
         return studentNavigation;
       }
       return recruiterNavigation;
@@ -83,7 +82,7 @@ const Header = () => {
                 <div className="flex items-center space-x-2">
                   <User className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-700 capitalize">
-                    {currentUser}
+                    {currentUser ?? userType}
                   </span>
                 </div>
                 <button
@@ -145,7 +144,7 @@ const Header = () => {
                     <div className="flex items-center space-x-2 px-3 py-2">
                       <User className="h-4 w-4 text-gray-600" />
                       <span className="text-sm font-medium text-gray-700 capitalize">
-                        {currentUser}
+                        {currentUser ?? userType}
                       </span>
                     </div>
                     <button

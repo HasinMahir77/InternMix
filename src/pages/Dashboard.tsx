@@ -4,13 +4,13 @@ import { Navigate, Link } from 'react-router-dom';
 import { Users, Briefcase, Calendar, TrendingUp } from 'lucide-react';
 
 const Dashboard = () => {
-  const { isAuthenticated, currentUser } = useAuth();
+  const { isAuthenticated, currentUser, userType } = useAuth();
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
 
-  const isStudent = currentUser === 'Mahir';
+  const isStudent = userType === 'student';
 
   return (
     <div className="min-h-screen pt-16 bg-gradient-to-br from-primary-50 via-white to-secondary-50">
@@ -129,9 +129,9 @@ const Dashboard = () => {
                 <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   Review Applications
                 </button>
-                <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                <Link to="/org-profile" className="text-center bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   Manage Company Profile
-                </button>
+                </Link>
               </>
             )}
           </div>

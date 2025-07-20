@@ -22,7 +22,7 @@ const Login = () => {
     if (success) {
       navigate('/');
     } else {
-      setError('Invalid username or password. Try: student/student or recruiter/recruiter');
+      setError('Invalid username or password. Try: student/student or company/company');
     }
   };
 

@@ -1,9 +1,10 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { login as authLogin, logout as authLogout, isAuthenticated as checkAuthStatus, getCurrentUser } from '../utils/auth';
+import { login as authLogin, logout as authLogout, isAuthenticated as checkAuthStatus, getCurrentUser, getUserType } from '../utils/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
   currentUser: string | null;
+  userType: 'student' | 'recruiter';
   appliedInternships: Set<string>;
   login: (username: string, password: string) => boolean;
   logout: () => void;
@@ -29,6 +30,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
   const [appliedInternships, setAppliedInternships] = useState<Set<string>>(new Set());
+  const [userType, setUserType] = useState<'student' | 'recruiter'>('student');
 
   useEffect(() => {
     // Check authentication status on app load
@@ -37,6 +39,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       const user = getCurrentUser();
       setIsAuthenticated(authenticated);
       setCurrentUser(user);
+      setUserType(getUserType(user));
     };
 
     checkAuth();
@@ -47,6 +50,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     if (success) {
       setIsAuthenticated(true);
       setCurrentUser(username);
+      setUserType(getUserType(username));
     }
     return success;
   };
@@ -55,6 +59,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     authLogout();
     setIsAuthenticated(false);
     setCurrentUser(null);
+    setUserType('student');
     setAppliedInternships(new Set());
   };
 
@@ -69,6 +74,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const value: AuthContextType = {
     isAuthenticated,
     currentUser,
+    userType,
     appliedInternships,
     login,
     logout,

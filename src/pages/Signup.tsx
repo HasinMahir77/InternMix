@@ -146,26 +146,26 @@ const Signup = () => {
               {/* Conditional Field */}
               {userType === 'student' ? (
                 <>
-                  <div>
-                    <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-1">
-                      University
-                    </label>
-                    <div className="relative">
-                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                        <GraduationCap className="h-4 w-4 text-gray-400" />
-                      </div>
-                      <input
-                        id="university"
-                        name="university"
-                        type="text"
-                        required
-                        value={formData.university}
-                        onChange={handleChange}
-                        className="block w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
-                        placeholder="Stanford University"
-                      />
+                <div>
+                  <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-1">
+                    University
+                  </label>
+                  <div className="relative">
+                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                      <GraduationCap className="h-4 w-4 text-gray-400" />
                     </div>
+                    <input
+                      id="university"
+                      name="university"
+                      type="text"
+                      required
+                      value={formData.university}
+                      onChange={handleChange}
+                      className="block w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                      placeholder="Stanford University"
+                    />
                   </div>
+                </div>
                   <div>
                     <label htmlFor="degree" className="block text-sm font-medium text-gray-700 mb-1">
                       Degree

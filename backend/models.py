@@ -17,10 +17,10 @@ class Intern(BaseModel):
 
 
 class Recruiter(BaseModel):
-    id: int
     organization_name: str
     first_name: str
     last_name: str
+    designation: str
     email: EmailStr
     phone: Optional[str] = None
     password_hash: str  # Don't return in API responses!
