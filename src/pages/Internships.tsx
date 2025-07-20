@@ -43,17 +43,8 @@ const internships = [
 ];
 
 const Internships = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, applyForInternship, isApplied } = useAuth();
   const [selectedInternship, setSelectedInternship] = useState(internships[0]);
-  const [appliedInternships, setAppliedInternships] = useState<Set<string>>(new Set());
-
-  const handleApply = (internshipTitle: string) => {
-    setAppliedInternships(prev => new Set([...prev, internshipTitle]));
-  };
-
-  const isApplied = (internshipTitle: string) => {
-    return appliedInternships.has(internshipTitle);
-  };
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -124,7 +115,7 @@ const Internships = () => {
 
                 <div className="flex items-center space-x-4">
                   <button 
-                    onClick={() => handleApply(selectedInternship.title)}
+                    onClick={() => applyForInternship(selectedInternship.title)}
                     disabled={isApplied(selectedInternship.title)}
                     className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${
                       isApplied(selectedInternship.title)

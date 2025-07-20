@@ -117,9 +117,9 @@ const Dashboard = () => {
                 <Link to="/profile" className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors text-center">
                   Update Profile
                 </Link>
-                <button className="bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
+                <Link to="/applications" className="text-center bg-white border border-gray-300 text-gray-700 px-4 py-3 rounded-lg font-medium hover:bg-gray-50 transition-colors">
                   View Applications
-                </button>
+                </Link>
               </>
             ) : (
               <>

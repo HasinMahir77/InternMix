@@ -10,6 +10,7 @@ import Dashboard from './pages/Dashboard';
 import Profile from './pages/Profile';
 import Resume from './pages/Resume';
 import Internships from './pages/Internships';
+import Applications from './pages/Applications';
 import Chat from './pages/Chat';
 import { AuthProvider } from './context/AuthContext';
 
@@ -29,6 +30,7 @@ function App() {
               <Route path="/profile" element={<Profile />} />
               <Route path="/resume" element={<Resume />} />
               <Route path="/internships" element={<Internships />} />
+              <Route path="/applications" element={<Applications />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

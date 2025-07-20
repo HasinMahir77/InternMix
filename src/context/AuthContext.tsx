@@ -4,8 +4,11 @@ import { login as authLogin, logout as authLogout, isAuthenticated as checkAuthS
 interface AuthContextType {
   isAuthenticated: boolean;
   currentUser: string | null;
+  appliedInternships: Set<string>;
   login: (username: string, password: string) => boolean;
   logout: () => void;
+  applyForInternship: (internshipTitle: string) => void;
+  isApplied: (internshipTitle: string) => boolean;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -25,6 +28,7 @@ interface AuthProviderProps {
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [appliedInternships, setAppliedInternships] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     // Check authentication status on app load
@@ -51,13 +55,25 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     authLogout();
     setIsAuthenticated(false);
     setCurrentUser(null);
+    setAppliedInternships(new Set());
+  };
+
+  const applyForInternship = (internshipTitle: string) => {
+    setAppliedInternships(prev => new Set([...prev, internshipTitle]));
+  };
+
+  const isApplied = (internshipTitle: string) => {
+    return appliedInternships.has(internshipTitle);
   };
 
   const value: AuthContextType = {
     isAuthenticated,
     currentUser,
+    appliedInternships,
     login,
     logout,
+    applyForInternship,
+    isApplied,
   };
 
   return (
