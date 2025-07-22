@@ -29,6 +29,7 @@ const Header = () => {
     { name: 'Dashboard', href: '/dashboard' },
     { name: 'Profile', href: '/org-profile' },
     { name: 'Listings', href: '/listings' },
+    { name: 'Chat', href: '/chat' },
   ];
 
   const getNavigation = () => {

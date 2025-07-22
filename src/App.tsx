@@ -15,6 +15,8 @@ import OrgProfile from './pages/OrgProfile';
 import Chat from './pages/Chat';
 import Listings from './pages/Listings';
 import { AuthProvider } from './context/AuthContext';
+import ForStudents from './pages/ForStudents';
+import ForCompanies from './pages/ForCompanies';
 
 function App() {
   
@@ -38,6 +40,8 @@ function App() {
               <Route path="/chat" element={<Chat />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/students" element={<ForStudents />} />
+              <Route path="/companies" element={<ForCompanies />} />
             </Routes>
           </main>
           <Footer />

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Users, Target, Heart, Award, ArrowRight } from 'lucide-react';
+import profilePic from '../dummy-assets/Student/dp.jpg';
 
 const About = () => {
   const values = [
@@ -27,19 +28,19 @@ const About = () => {
 
   const team = [
     {
-      name: 'Sarah Johnson',
+      name: 'Hasin Mahir',
       role: 'CEO & Co-Founder',
-      image: 'https://images.pexels.com/photos/3769021/pexels-photo-3769021.jpeg?auto=compress&cs=tinysrgb&w=300',
+      image: profilePic,
       description: 'Former Head of Talent at Google, passionate about connecting students with opportunities.',
     },
     {
-      name: 'Michael Chen',
+      name: 'Hasan Mahmud',
       role: 'CTO & Co-Founder',
       image: 'https://images.pexels.com/photos/2379004/pexels-photo-2379004.jpeg?auto=compress&cs=tinysrgb&w=300',
       description: 'Tech veteran with 15+ years building scalable platforms at Microsoft and Amazon.',
     },
     {
-      name: 'Emily Rodriguez',
+      name: 'Muymuna Rahman',
       role: 'Head of Student Success',
       image: 'https://images.pexels.com/photos/3763188/pexels-photo-3763188.jpeg?auto=compress&cs=tinysrgb&w=300',
       description: 'Former university career counselor dedicated to student career development.',
@@ -76,7 +77,7 @@ const About = () => {
                   and emerging talent.
                 </p>
                 <p>
-                  Founded in 2023 by a team of former tech executives and university career counselors, 
+                  Founded in 2025 by a Hasin Mahir, a Computer Science Student at Independent University, Bangladesh(IUB),
                   we set out to bridge this gap with technology, transparency, and a genuine commitment 
                   to student success.
                 </p>

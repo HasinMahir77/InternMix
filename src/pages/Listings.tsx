@@ -25,6 +25,7 @@ interface Listing {
   deadline: string;
   archived: boolean;
   applicants: Applicant[];
+  hiddenRequirements?: string;
 }
 
 const Listings: React.FC = () => {
@@ -67,6 +68,7 @@ const Listings: React.FC = () => {
       deadline: '2024-08-30',
       archived: false,
       applicants: [],
+      hiddenRequirements: 'Candidate must have a portfolio of at least 3 projects.',
     },
   ]);
   const [formData, setFormData] = useState({
@@ -75,6 +77,7 @@ const Listings: React.FC = () => {
     skills: '',
     duration: '',
     deadline: '',
+    hiddenRequirements: '',
   });
   const [editingId, setEditingId] = useState<number | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -92,7 +95,7 @@ const Listings: React.FC = () => {
   };
 
   const resetForm = () => {
-    setFormData({ title: '', description: '', skills: '', duration: '', deadline: '' });
+    setFormData({ title: '', description: '', skills: '', duration: '', deadline: '', hiddenRequirements: '' });
     setEditingId(null);
   };
 
@@ -110,6 +113,7 @@ const Listings: React.FC = () => {
         .filter(Boolean),
       duration: formData.duration.trim(),
       deadline: formData.deadline,
+      hiddenRequirements: formData.hiddenRequirements.trim(),
       archived: false,
       applicants: editingId ? listings.find(l => l.id === editingId)?.applicants || [] : [],
     };
@@ -132,6 +136,7 @@ const Listings: React.FC = () => {
       skills: listing.skills.join(', '),
       duration: listing.duration,
       deadline: listing.deadline,
+      hiddenRequirements: listing.hiddenRequirements || '',
     });
   };
 
@@ -224,6 +229,17 @@ const Listings: React.FC = () => {
                 type="date"
                 name="deadline"
                 value={formData.deadline}
+                onChange={handleChange}
+                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+              />
+            </div>
+            <div className="md:col-span-2">
+              <label className="block text-sm font-medium text-gray-700 mb-1">Hidden Requirements</label>
+              <textarea
+                name="hiddenRequirements"
+                rows={2}
+                placeholder="e.g., specific portfolio requirements, minimum GPA, etc."
+                value={formData.hiddenRequirements}
                 onChange={handleChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
               />

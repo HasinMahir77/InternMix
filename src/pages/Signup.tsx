@@ -1,10 +1,11 @@
-import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Users, GraduationCap, Building } from 'lucide-react';
 
 const Signup = () => {
+  const location = useLocation();
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState('student');
+  const [userType, setUserType] = useState(location.state?.userType || 'student');
   const [formData, setFormData] = useState({
     firstName: '',
     lastName: '',
@@ -16,6 +17,12 @@ const Signup = () => {
     company: '',
     terms: false,
   });
+
+  useEffect(() => {
+    if (location.state?.userType) {
+      setUserType(location.state.userType);
+    }
+  }, [location.state]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
