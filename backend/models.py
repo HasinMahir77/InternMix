@@ -1,5 +1,5 @@
 from typing import Optional, List
-from pydantic import BaseModel, EmailStr, HttpUrl
+from pydantic import BaseModel, EmailStr, HttpUrl, Field
 
 class Intern(BaseModel):
     first_name: str
@@ -11,7 +11,8 @@ class Intern(BaseModel):
     major: str
     cgpa: float
     password_hash: str
-    resume: str
+    resume_path: str
+    github_url: str
 
     profile_image_url: Optional[HttpUrl] = None
 
@@ -29,4 +30,13 @@ class Recruiter(BaseModel):
     active: bool = True
     created_at: str  # ISO datetime as string or datetime object
 
-    listings: Optional[List[int]] = []  # List of listing IDs this recruiter posted
+    listings: List[int] = Field(default_factory=list)  # List of listing IDs this recruiter posted
+
+
+class Listing(BaseModel):
+    id: Optional[int] = None
+    recruiter_id: int  # FK to a Recruiter (one recruiter -> many listings)
+    title: str
+    address: str
+    description: str
+    skills: List[str] = Field(default_factory=list)
