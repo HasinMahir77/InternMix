@@ -1,61 +1,94 @@
-// Simple cookie-based authentication utility
-
-const DUMMY_USERS = {
-  Mahir: 'Mahir',
-  recruiter: 'recruiter',
-  company: 'company',
-};
+// API-based authentication utility using JWT Bearer tokens
 
 export type UserType = 'student' | 'recruiter';
 
-export const getUserType = (username: string | null): UserType => {
-  if (username === 'company' || username === 'recruiter') {
-    return 'recruiter';
-  }
+export interface AuthUser {
+  id: number;
+  email: string;
+  first_name: string;
+  last_name: string;
+  user_type: UserType;
+}
+
+const API_BASE = import.meta.env.VITE_API_URL || '';
+const TOKEN_KEY = 'internmix_token';
+
+export const getUserType = (userTypeOrEmail: string | null): UserType => {
+  if (userTypeOrEmail === 'recruiter') return 'recruiter';
   return 'student';
 };
 
-// Cookie utility functions
-export const setCookie = (name: string, value: string, days: number = 7) => {
-  const expires = new Date();
-  expires.setTime(expires.getTime() + (days * 24 * 60 * 60 * 1000));
-  document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+export const setToken = (token: string) => {
+  localStorage.setItem(TOKEN_KEY, token);
 };
 
-export const getCookie = (name: string): string | null => {
-  const nameEQ = name + "=";
-  const ca = document.cookie.split(';');
-  for (let i = 0; i < ca.length; i++) {
-    let c = ca[i];
-    while (c.charAt(0) === ' ') c = c.substring(1, c.length);
-    if (c.indexOf(nameEQ) === 0) return c.substring(nameEQ.length, c.length);
+export const getToken = (): string | null => {
+  return localStorage.getItem(TOKEN_KEY);
+};
+
+export const deleteToken = () => {
+  localStorage.removeItem(TOKEN_KEY);
+};
+
+export const login = async (email: string, password: string): Promise<{ success: boolean; user?: AuthUser }> => {
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ email, password }),
+    });
+    if (!res.ok) return { success: false };
+    const data = await res.json();
+    setToken(data.access_token);
+    return { success: true, user: data.user as AuthUser };
+  } catch {
+    return { success: false };
   }
-  return null;
 };
 
-export const deleteCookie = (name: string) => {
-  document.cookie = `${name}=;expires=Thu, 01 Jan 1970 00:00:00 UTC;path=/`;
-};
-
-// Authentication functions
-export const login = (username: string, password: string): boolean => {
-  if (DUMMY_USERS[username as keyof typeof DUMMY_USERS] === password) {
-    setCookie('username', username);
-    return true;
+export const signup = async (payload: {
+  first_name: string;
+  last_name: string;
+  email: string;
+  password: string;
+  user_type: UserType;
+}): Promise<{ success: boolean; user?: AuthUser; error?: string }> => {
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/signup`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}));
+      return { success: false, error: err?.detail || 'Signup failed' };
+    }
+    const data = await res.json();
+    return { success: true, user: data as AuthUser };
+  } catch (e) {
+    return { success: false, error: 'Network error' };
   }
-  return false;
 };
 
 export const logout = () => {
-  deleteCookie('username');
+  deleteToken();
 };
 
 export const isAuthenticated = (): boolean => {
-  const username = getCookie('username');
-  return username !== null && username in DUMMY_USERS;
+  return getToken() !== null;
 };
 
-export const getCurrentUser = (): string | null => {
-  const username = getCookie('username');
-  return username && username in DUMMY_USERS ? username : null;
-}; 
+export const getCurrentUser = async (): Promise<AuthUser | null> => {
+  const token = getToken();
+  if (!token) return null;
+  try {
+    const res = await fetch(`${API_BASE}/api/auth/me`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (!res.ok) return null;
+    const data = await res.json();
+    return data as AuthUser;
+  } catch {
+    return null;
+  }
+};

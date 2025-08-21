@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Users, GraduationCap, Building } from 'lucide-react';
+import { signup } from '../utils/auth';
 
 const Signup = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState(location.state?.userType || 'student');
   const [formData, setFormData] = useState({
@@ -24,10 +26,18 @@ const Signup = () => {
     }
   }, [location.state]);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    // Handle signup logic here
-    console.log('Signup attempt:', { ...formData, userType });
+    if (formData.password !== formData.confirmPassword) return;
+    const payload = {
+      first_name: formData.firstName,
+      last_name: formData.lastName,
+      email: formData.email,
+      password: formData.password,
+      user_type: userType === 'company' ? 'recruiter' : 'student',
+    } as const;
+    const res = await signup(payload);
+    if (res.success) navigate('/login');
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {

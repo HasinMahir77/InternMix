@@ -7,22 +7,22 @@ const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [formData, setFormData] = useState({
-    username: '',
+    email: '',
     password: '',
     remember: false,
   });
   const { login } = useAuth();
   const navigate = useNavigate();
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    
-    const success = login(formData.username, formData.password);
-    if (success) {
-      navigate('/');
+    const result = await login(formData.email, formData.password);
+    if (result.success && result.user) {
+      const destination = result.user.user_type === 'recruiter' ? '/listings' : '/dashboard';
+      navigate(destination, { replace: true });
     } else {
-      setError('Invalid username or password. Try: student/student or company/company');
+      setError('Invalid email or password');
     }
   };
 
@@ -57,24 +57,24 @@ const Login = () => {
           {/* Form */}
           <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-100">
             <form onSubmit={handleSubmit} className="space-y-6">
-              {/* Username Field */}
+              {/* Email Field */}
               <div>
-                <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
-                  Username
+                <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+                  Email
                 </label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                     <Mail className="h-5 w-5 text-gray-400" />
                   </div>
                   <input
-                    id="username"
-                    name="username"
-                    type="text"
+                    id="email"
+                    name="email"
+                    type="email"
                     required
-                    value={formData.username}
+                    value={formData.email}
                     onChange={handleChange}
                     className="block w-full pl-10 pr-3 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors"
-                    placeholder="Enter your username"
+                    placeholder="Enter your email"
                   />
                 </div>
               </div>

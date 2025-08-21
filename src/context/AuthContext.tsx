@@ -1,12 +1,12 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { login as authLogin, logout as authLogout, isAuthenticated as checkAuthStatus, getCurrentUser, getUserType } from '../utils/auth';
+import { login as authLogin, logout as authLogout, isAuthenticated as tokenExists, getCurrentUser, type AuthUser } from '../utils/auth';
 
 interface AuthContextType {
   isAuthenticated: boolean;
-  currentUser: string | null;
+  currentUser: AuthUser | null;
   userType: 'student' | 'recruiter';
   appliedInternships: Set<string>;
-  login: (username: string, password: string) => boolean;
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: AuthUser }>;
   logout: () => void;
   applyForInternship: (internshipTitle: string) => void;
   isApplied: (internshipTitle: string) => boolean;
@@ -28,31 +28,42 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
+  const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [appliedInternships, setAppliedInternships] = useState<Set<string>>(new Set());
   const [userType, setUserType] = useState<'student' | 'recruiter'>('student');
 
   useEffect(() => {
-    // Check authentication status on app load
-    const checkAuth = () => {
-      const authenticated = checkAuthStatus();
-      const user = getCurrentUser();
-      setIsAuthenticated(authenticated);
-      setCurrentUser(user);
-      setUserType(getUserType(user));
+    const init = async () => {
+      if (!tokenExists()) {
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+        setUserType('student');
+        return;
+      }
+      const user = await getCurrentUser();
+      if (user) {
+        setIsAuthenticated(true);
+        setCurrentUser(user);
+        setUserType(user.user_type);
+      } else {
+        setIsAuthenticated(false);
+        setCurrentUser(null);
+        setUserType('student');
+      }
     };
-
-    checkAuth();
+    init();
   }, []);
 
-  const login = (username: string, password: string): boolean => {
-    const success = authLogin(username, password);
-    if (success) {
+  const login = async (email: string, password: string): Promise<{ success: boolean; user?: AuthUser }> => {
+    const result = await authLogin(email, password);
+    if (result.success) {
       setIsAuthenticated(true);
-      setCurrentUser(username);
-      setUserType(getUserType(username));
+      if (result.user) {
+        setCurrentUser(result.user);
+        setUserType(result.user.user_type);
+      }
     }
-    return success;
+    return result;
   };
 
   const logout = () => {

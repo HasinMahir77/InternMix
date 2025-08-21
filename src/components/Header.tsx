@@ -84,7 +84,7 @@ const Header = () => {
                 <div className="flex items-center space-x-2">
                   <User className="h-4 w-4 text-gray-600" />
                   <span className="text-sm font-medium text-gray-700 capitalize">
-                    {currentUser ?? userType}
+                    {currentUser?.first_name || currentUser?.email || userType}
                   </span>
                 </div>
                 <button
@@ -146,7 +146,7 @@ const Header = () => {
                     <div className="flex items-center space-x-2 px-3 py-2">
                       <User className="h-4 w-4 text-gray-600" />
                       <span className="text-sm font-medium text-gray-700 capitalize">
-                        {currentUser ?? userType}
+                        {currentUser?.first_name || currentUser?.email || userType}
                       </span>
                     </div>
                     <button
