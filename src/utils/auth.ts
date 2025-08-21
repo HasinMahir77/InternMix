@@ -3,7 +3,7 @@
 export type UserType = 'student' | 'recruiter';
 
 export interface AuthUser {
-  id: number;
+  id: string;  // Now using email as ID
   email: string;
   first_name: string;
   last_name: string;
