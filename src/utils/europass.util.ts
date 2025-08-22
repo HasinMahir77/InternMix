@@ -16,6 +16,7 @@ export type InternMixCV = {
     address?: string;
     dob?: string;
     nationality?: string;
+    cgpa?: number;
   };
   education: Array<{
     organisation?: string;
@@ -43,6 +44,16 @@ export type InternMixCV = {
     production?: string;
     writing?: string;
   }>;
+  skills?: Array<{
+    name?: string;
+    taxonomy?: string;
+    competencyId?: string;
+  }>;
+  github?: {
+    languages: string[];
+    repos: string[];
+    repoLanguageMap: Record<string, string>;
+  };
   meta?: { template?: string };
 };
 
@@ -252,6 +263,22 @@ function mapEuropass(raw: Record<string, unknown>): InternMixCV {
     };
   });
 
+  // Extract skills
+  const skillsRoot = (candidateProfile.Skills as Record<string, unknown>) ?? {};
+  const skillsCompetencies = ensureArray(
+    skillsRoot.PersonCompetency as Record<string, unknown>[] | Record<string, unknown>
+  );
+  const skillsArr = skillsCompetencies.map((comp: Record<string, unknown>) => {
+    const name = (comp['hr:CompetencyName'] as string) || getTextContent(comp['hr:CompetencyName']);
+    const taxonomy = (comp['hr:TaxonomyID'] as string) || getTextContent(comp['hr:TaxonomyID']);
+    const competencyId = (comp['CompetencyID'] as string) || getTextContent(comp['CompetencyID']);
+    return {
+      name,
+      taxonomy,
+      competencyId,
+    };
+  }).filter(s => s.name || s.taxonomy || s.competencyId);
+
   // Extract template information
   const renderingInfo = (candidate.RenderingInformation as Record<string, unknown>) ?? {};
   const design = (renderingInfo.Design as Record<string, unknown>) ?? {};
@@ -269,6 +296,7 @@ function mapEuropass(raw: Record<string, unknown>): InternMixCV {
     education: eduArr,
     experience: weArr,
     languages: langArr,
+    skills: skillsArr,
     meta: { template: design.Template as string | undefined },
   };
 }

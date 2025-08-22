@@ -18,6 +18,7 @@ const Signup = () => {
     degree: '',
     major: '',
     phoneNum: '',
+    cgpa: '',
     company: '',
     recruiterPhone: '',
     terms: false,
@@ -42,6 +43,7 @@ const Signup = () => {
       degree: userType === 'student' ? formData.degree : undefined,
       major: userType === 'student' ? formData.major : undefined,
       phone_num: userType === 'student' ? formData.phoneNum : formData.recruiterPhone,
+      cgpa: userType === 'student' && formData.cgpa !== '' ? Number(formData.cgpa) : undefined,
     } as const;
     const res = await signup(payload);
     if (res.success) navigate('/login');
@@ -225,6 +227,24 @@ const Signup = () => {
                       onChange={handleChange}
                       className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
                       placeholder="e.g., Computer Science, Business Administration"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="cgpa" className="block text-sm font-medium text-gray-700 mb-1">
+                      CGPA
+                    </label>
+                    <input
+                      id="cgpa"
+                      name="cgpa"
+                      type="number"
+                      min="0"
+                      max="4"
+                      step="0.01"
+                      required
+                      value={formData.cgpa}
+                      onChange={handleChange}
+                      className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                      placeholder="e.g., 3.75"
                     />
                   </div>
                   <div>

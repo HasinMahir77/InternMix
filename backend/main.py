@@ -75,6 +75,7 @@ class SignupRequest(BaseModel):
     degree: Optional[str] = None  # For students
     major: Optional[str] = None  # For students
     phone_num: Optional[str] = None  # For both students and recruiters
+    cgpa: Optional[float] = None  # For students
 
 
 class LoginRequest(BaseModel):
@@ -247,6 +248,7 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
             degree=payload.degree.strip() if payload.degree else None,
             major=payload.major.strip() if payload.major else None,
             phone_num=payload.phone_num.strip() if payload.phone_num else None,
+            cgpa=payload.cgpa if payload.cgpa is not None else None,
         )
     else:
         user = Recruiter(

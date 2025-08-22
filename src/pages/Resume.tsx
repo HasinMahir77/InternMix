@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { UploadCloud, Github, User, GraduationCap, Briefcase, Languages } from 'lucide-react';
+import { UploadCloud, User, GraduationCap, Briefcase, Languages, Github } from 'lucide-react';
 import { getUserReposSummary, extractUsernameFromUrl } from '../utils/github';
 import { setupPdfWorker, parseEuropassPdf, type InternMixCV } from '../utils/europass.util';
-import { uploadResumePdf, saveParsedData } from '../utils/student';
+import { uploadResumePdf, saveParsedData, getStudentProfile } from '../utils/student';
 
 // Normalize simple HTML (p/br) to plain text and strip other tags
 function stripAndNormalizeHtml(html: string): string {
@@ -22,16 +22,12 @@ function stripAndNormalizeHtml(html: string): string {
 const Resume = () => {
   const { isAuthenticated } = useAuth();
   const [resumeFile, setResumeFile] = useState<File | null>(null);
-  const [githubUrl, setGithubUrl] = useState('');
   const [isUploaded, setIsUploaded] = useState(false);
   const [parsedResume, setParsedResume] = useState<InternMixCV | null>(null);
-  const [githubData, setGithubData] = useState<{
-    languages: string[];
-    repos: string[];
-    repoLanguageMap: Record<string, string>;
-  } | null>(null);
+  const [githubData, setGithubData] = useState<InternMixCV['github'] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
   const [pdfWorkerReady, setPdfWorkerReady] = useState(false);
 
   // Set up PDF worker when component mounts
@@ -47,6 +43,24 @@ const Resume = () => {
     }
   }, []);
 
+  // On mount, try to fetch existing parsed resume from backend profile
+  useEffect(() => {
+    const init = async () => {
+      if (!isAuthenticated) return;
+      try {
+        const profile = await getStudentProfile();
+        if (profile && (profile as unknown as { resume_parsed?: unknown | null }).resume_parsed) {
+          const existing = (profile as unknown as { resume_parsed?: unknown | null }).resume_parsed as InternMixCV;
+          setParsedResume(existing);
+          setIsUploaded(true);
+        }
+      } catch (e) {
+        console.warn('Failed to fetch existing parsed resume:', e);
+      }
+    };
+    init();
+  }, [isAuthenticated]);
+
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
   }
@@ -58,27 +72,15 @@ const Resume = () => {
     }
   };
 
-  const extractGitHubInfo = async (githubUrl: string) => {
-    const username = extractUsernameFromUrl(githubUrl);
-    if (!username) {
-      throw new Error('Invalid GitHub URL. Please enter a valid GitHub profile URL.');
-    }
-    
-    // Get GitHub token from environment variable
+  const extractGitHubForCurrentUser = async () => {
+    const profile = await getStudentProfile();
+    const url = profile.github_url;
+    if (!url) return null;
+    const username = extractUsernameFromUrl(url);
+    if (!username) return null;
     const token = import.meta.env.VITE_GITHUB_TOKEN;
-    
     const githubDataResult = await getUserReposSummary(username, token);
-    
-    // Store the GitHub data
     setGithubData(githubDataResult);
-    
-    // Log the repo:language mapping to console as requested
-    console.log('GitHub Repository Language Mapping:');
-    console.log(githubDataResult.repoLanguageMap);
-    
-    // Also log the full data structure
-    console.log('Full GitHub Data:', githubDataResult);
-    
     return githubDataResult;
   };
 
@@ -87,6 +89,7 @@ const Resume = () => {
     setError(null);
     
     try {
+      let parsedLocal: InternMixCV | null = null;
       if (resumeFile) {
         // Check if PDF worker is ready
         if (!pdfWorkerReady) {
@@ -96,8 +99,18 @@ const Resume = () => {
         // Parse Europass PDF
         console.log('Starting PDF parsing for file:', resumeFile.name);
         const parsedData = await parseEuropassPdf(resumeFile);
-        setParsedResume(parsedData);
-        console.log('Parsed Resume Data:', parsedData);
+        // Include CGPA from profile, if available
+        try {
+          const profile = await getStudentProfile();
+          const cgpaFromProfile = profile.cgpa ?? null;
+          if (cgpaFromProfile !== null && cgpaFromProfile !== undefined) {
+            parsedData.personal = { ...(parsedData.personal || {}), cgpa: cgpaFromProfile };
+          }
+        } catch (err) {
+          console.warn('Failed to augment CGPA from profile:', err);
+        }
+        // Build and persist a single combined object later; avoid intermediate logs
+        parsedLocal = parsedData;
         // Upload the resume PDF to server
         try {
           await uploadResumePdf(resumeFile);
@@ -106,20 +119,28 @@ const Resume = () => {
         }
       }
       
-      if (githubUrl) {
-        await extractGitHubInfo(githubUrl);
-      }
+      // If the user has a GitHub URL in their profile, fetch and attach it
+      const fetchedGithub = await extractGitHubForCurrentUser();
       
-      if (resumeFile || githubUrl) {
+      if (resumeFile) {
         setIsUploaded(true);
         // Persist parsed data using local variables to avoid state race
         try {
-          const toSave: { resume_parsed?: unknown; github_parsed?: unknown } = {};
-          if (parsedResume) toSave.resume_parsed = parsedResume;
-          if (githubData) toSave.github_parsed = githubData;
-          if (toSave.resume_parsed || toSave.github_parsed) {
-            await saveParsedData(toSave);
+          // Build combined parsed data from local parsed plus github for persistence
+          const gh = githubData || fetchedGithub || null;
+          if (parsedLocal) {
+            const combined: InternMixCV = { ...parsedLocal, github: gh || undefined } as InternMixCV;
+            setParsedResume(combined);
           }
+          const toPersist = parsedLocal ? { ...(parsedLocal as unknown as Record<string, unknown>), github: gh || undefined } : undefined;
+          await saveParsedData({
+            resume_parsed: toPersist,
+            github_parsed: undefined,
+          });
+          if (toPersist) {
+            console.log('Saved Parsed Resume (DB object):', toPersist);
+          }
+          setSuccess('Resume data saved successfully.');
         } catch (e) {
           console.error('Saving parsed data failed:', e);
         }
@@ -152,11 +173,12 @@ const Resume = () => {
   const handleUpdate = () => {
     setIsUploaded(false);
     setResumeFile(null);
-    setGithubUrl('');
     setParsedResume(null);
     setGithubData(null);
     setError(null);
   };
+
+  // Removed manual save handler; saving occurs automatically after parsing
 
   const renderResumeData = () => {
     if (!parsedResume) return null;
@@ -330,6 +352,59 @@ const Resume = () => {
             </div>
           </div>
         )}
+
+        {/* Skills */}
+        {parsedResume.skills && parsedResume.skills.length > 0 && (
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <Briefcase className="h-8 w-8 text-indigo-600" />
+              <h3 className="text-lg font-semibold text-indigo-900">Skills</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {parsedResume.skills.map((s, idx) => (
+                <span key={idx} className="bg-indigo-200 text-indigo-800 px-2.5 py-1 rounded-full text-sm font-medium" title={s.taxonomy || s.competencyId || ''}>
+                  {s.name || s.competencyId || 'Skill'}
+                </span>
+              ))}
+            </div>
+          </div>
+        )}
+
+        {/* GitHub (if present in parsed resume) */}
+        {parsedResume.github && (
+          <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
+            <div className="flex items-center space-x-3 mb-4">
+              <Github className="h-8 w-8 text-orange-600" />
+              <h3 className="text-lg font-semibold text-orange-900">GitHub Summary</h3>
+            </div>
+            <div className="space-y-3">
+              {parsedResume.github.languages && parsedResume.github.languages.length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-orange-800 mb-2">Languages Used:</p>
+                  <div className="flex flex-wrap gap-2">
+                    {parsedResume.github.languages.map((lang) => (
+                      <span key={lang} className="bg-orange-200 text-orange-800 px-2.5 py-1 rounded-full text-sm font-medium">
+                        {lang}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {parsedResume.github.repoLanguageMap && Object.keys(parsedResume.github.repoLanguageMap).length > 0 && (
+                <div>
+                  <p className="text-sm font-medium text-orange-800 mb-2">Repository Languages:</p>
+                  <div className="space-y-1">
+                    {Object.entries(parsedResume.github.repoLanguageMap).map(([repo, lang]) => (
+                      <div key={repo} className="text-sm text-orange-700">
+                        <span className="font-medium">{repo}:</span> {lang}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     );
   };
@@ -341,7 +416,7 @@ const Resume = () => {
         
         {!isUploaded ? (
           <div className="bg-white rounded-xl shadow-lg p-8">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="grid grid-cols-1 gap-8">
               {/* Upload Resume */}
               <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
                 <UploadCloud className="h-12 w-12 text-gray-400 mb-4" />
@@ -368,19 +443,6 @@ const Resume = () => {
                 {resumeFile && <p className="text-sm text-gray-600 mt-2">{resumeFile.name}</p>}
               </div>
 
-              {/* Link GitHub */}
-              <div className="flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-lg p-8 text-center">
-                <Github className="h-12 w-12 text-gray-400 mb-4" />
-                <h3 className="text-lg font-semibold text-gray-900">Link GitHub Profile</h3>
-                <p className="text-sm text-gray-500 mt-1">Showcase your projects</p>
-                <input
-                  type="text"
-                  placeholder="https://github.com/your-profile"
-                  value={githubUrl}
-                  onChange={(e) => setGithubUrl(e.target.value)}
-                  className="mt-4 w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
-                />
-              </div>
             </div>
             <div className="mt-8 text-center">
               {error && (
@@ -388,9 +450,14 @@ const Resume = () => {
                   {error}
                 </div>
               )}
+              {success && (
+                <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-800 rounded-lg">
+                  {success}
+                </div>
+              )}
               <button
                 onClick={handleUpload}
-                disabled={(!resumeFile && !githubUrl) || isLoading || !pdfWorkerReady}
+                disabled={!resumeFile || isLoading || !pdfWorkerReady}
                 className="bg-primary-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center mx-auto"
               >
                 {isLoading ? (
@@ -418,46 +485,25 @@ const Resume = () => {
               </button>
             </div>
 
-            {!parsedResume && !githubData ? (
+            {error && (
+              <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-lg">
+                {error}
+              </div>
+            )}
+            {success && (
+              <div className="mb-4 p-3 bg-green-100 border border-green-400 text-green-800 rounded-lg">
+                {success}
+              </div>
+            )}
+
+            {!parsedResume ? (
               <div className="text-center py-12">
-                <p className="text-gray-500 text-lg">No information extracted yet. Upload a Europass PDF or link your GitHub profile to get started.</p>
+                <p className="text-gray-500 text-lg">No information extracted yet. Upload a Europass PDF to get started.</p>
               </div>
             ) : (
               <div className="space-y-6">
                 {/* Resume Data */}
                 {parsedResume && renderResumeData()}
-
-                {/* GitHub Projects */}
-                {githubData && (
-                  <div className="bg-orange-50 border border-orange-200 rounded-lg p-6">
-                    <div className="flex items-center space-x-3 mb-4">
-                      <Github className="h-8 w-8 text-orange-600" />
-                      <h3 className="text-lg font-semibold text-orange-900">GitHub Projects</h3>
-                    </div>
-                    <div className="space-y-3">
-                      <div>
-                        <p className="text-sm font-medium text-orange-800 mb-2">Languages Used:</p>
-                        <div className="flex flex-wrap gap-2">
-                          {githubData.languages.map(lang => (
-                            <span key={lang} className="bg-orange-200 text-orange-800 px-2.5 py-1 rounded-full text-sm font-medium">
-                              {lang}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div>
-                        <p className="text-sm font-medium text-orange-800 mb-2">Repository Languages:</p>
-                        <div className="space-y-1">
-                          {Object.entries(githubData.repoLanguageMap).map(([repo, lang]) => (
-                            <div key={repo} className="text-sm text-orange-700">
-                              <span className="font-medium">{repo}:</span> {lang}
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                )}
               </div>
             )}
           </div>

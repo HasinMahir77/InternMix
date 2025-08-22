@@ -26,3 +26,5 @@ dist-ssr
 EuroResume.pdf
 /backend/__pycache__
 /backend/uploads
+/.venv
+attachment.xml
