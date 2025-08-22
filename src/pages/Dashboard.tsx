@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
-import { Users, Briefcase, Calendar, TrendingUp, Loader2, RefreshCw, CheckCircle, Clock, AlertCircle } from 'lucide-react';
+import { Users, Briefcase, Calendar, TrendingUp, Loader2, RefreshCw, CheckCircle, Clock, AlertCircle, Check, X, Hourglass } from 'lucide-react';
 import { 
   getRecruiterDashboard, 
   getStudentDashboard, 
@@ -200,18 +200,44 @@ const Dashboard = () => {
                   </div>
                 </div>
 
-                                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
-                   <div className="flex items-center space-x-3 mb-4">
-                     <div className="bg-teal-100 p-2 rounded-lg">
-                       <Calendar className="h-6 w-6 text-teal-600" />
-                     </div>
-                     <h3 className="text-lg font-semibold text-gray-900">Interviews</h3>
-                   </div>
-                   <p className="text-gray-600 mb-4">Scheduled interviews</p>
-                   <div className="text-2xl font-bold text-teal-600">
-                     {recruiterData?.upcoming_interviews || 0} This Week
-                   </div>
-                 </div>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="bg-green-100 p-2 rounded-lg">
+                      <Check className="h-6 w-6 text-green-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Accepted</h3>
+                  </div>
+                  <p className="text-gray-600 mb-4">Candidates you accepted</p>
+                  <div className="text-2xl font-bold text-green-600">
+                    {recruiterData?.accepted_applications || 0}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="bg-red-100 p-2 rounded-lg">
+                      <X className="h-6 w-6 text-red-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Rejected</h3>
+                  </div>
+                  <p className="text-gray-600 mb-4">Candidates you rejected</p>
+                  <div className="text-2xl font-bold text-red-600">
+                    {recruiterData?.rejected_applications || 0}
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="bg-yellow-100 p-2 rounded-lg">
+                      <Hourglass className="h-6 w-6 text-yellow-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Pending</h3>
+                  </div>
+                  <p className="text-gray-600 mb-4">Awaiting your decision</p>
+                  <div className="text-2xl font-bold text-yellow-600">
+                    {recruiterData?.pending_applications || 0}
+                  </div>
+                </div>
 
                  <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                    <div className="flex items-center space-x-3 mb-4">

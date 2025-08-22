@@ -33,6 +33,7 @@ export interface ScoredApplicationEntry {
     major: string | null;
     cgpa: number | null;
     profile_image_url: string | null;
+    resume_url?: string | null;
   };
   status: string;
   similarity_score: number;
@@ -64,6 +65,22 @@ export const getRecruiterProfile = async (): Promise<RecruiterProfile> => {
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.detail || 'Failed to fetch recruiter profile');
+  }
+  return response.json();
+};
+
+export const updateApplicationStatus = async (
+  applicationId: number,
+  status: 'accepted' | 'rejected' | 'pending' | 'waitlisted'
+): Promise<{ message: string; status: string }> => {
+  const response = await fetch(`${API_BASE}/api/applications/${applicationId}/status`, {
+    method: 'PATCH',
+    headers: getAuthHeaders(),
+    body: JSON.stringify({ status }),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to update status');
   }
   return response.json();
 };

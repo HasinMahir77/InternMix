@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, useSearchParams } from 'react-router-dom';
-import { Loader2, Users, BadgeCheck } from 'lucide-react';
-import { getScoredApplicationsForListing, type ScoredApplicationEntry } from '../utils/recruiter';
+import { Loader2, Users, BadgeCheck, Download, Check, X } from 'lucide-react';
+import { getScoredApplicationsForListing, type ScoredApplicationEntry, updateApplicationStatus } from '../utils/recruiter';
 
 const ListingApplications: React.FC = () => {
   const { isAuthenticated, userType } = useAuth();
@@ -11,6 +11,7 @@ const ListingApplications: React.FC = () => {
   const [error, setError] = useState<string | null>(null);
   const [listingTitle, setListingTitle] = useState<string>('');
   const [apps, setApps] = useState<ScoredApplicationEntry[]>([]);
+  const [busyId, setBusyId] = useState<number | null>(null);
 
   const listingId = Number(searchParams.get('listingId'));
 
@@ -31,6 +32,18 @@ const ListingApplications: React.FC = () => {
     };
     load();
   }, [isAuthenticated, userType, listingId]);
+
+  const handleStatus = async (applicationId: number, status: 'accepted' | 'rejected') => {
+    try {
+      setBusyId(applicationId);
+      await updateApplicationStatus(applicationId, status);
+      setApps(prev => prev.map(a => a.application_id === applicationId ? { ...a, status } : a));
+    } catch (e) {
+      alert(e instanceof Error ? e.message : 'Failed to update status');
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   if (!isAuthenticated || userType !== 'recruiter') {
     return <Navigate to="/login" replace />;
@@ -88,6 +101,35 @@ const ListingApplications: React.FC = () => {
                     <span className="inline-flex items-center text-xs px-2 py-1 rounded bg-blue-50 text-blue-700">
                       <BadgeCheck className="h-3 w-3 mr-1" /> {a.status.replace('_',' ')}
                     </span>
+                    <div className="flex items-center space-x-2 ml-2">
+                      <button
+                        onClick={() => handleStatus(a.application_id, 'accepted')}
+                        disabled={busyId === a.application_id}
+                        className="inline-flex items-center px-3 py-1.5 text-xs rounded bg-green-600 text-white hover:bg-green-700 disabled:opacity-50"
+                        title="Accept"
+                      >
+                        <Check className="h-3 w-3 mr-1" /> Accept
+                      </button>
+                      <button
+                        onClick={() => handleStatus(a.application_id, 'rejected')}
+                        disabled={busyId === a.application_id}
+                        className="inline-flex items-center px-3 py-1.5 text-xs rounded bg-red-600 text-white hover:bg-red-700 disabled:opacity-50"
+                        title="Reject"
+                      >
+                        <X className="h-3 w-3 mr-1" /> Reject
+                      </button>
+                      {a.intern.resume_url && (
+                        <a
+                          href={a.intern.resume_url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center px-3 py-1.5 text-xs rounded bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          title="Download Resume"
+                        >
+                          <Download className="h-3 w-3 mr-1" /> Resume
+                        </a>
+                      )}
+                    </div>
                   </div>
                 </div>
               ))

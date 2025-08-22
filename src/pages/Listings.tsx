@@ -36,6 +36,24 @@ const Listings: React.FC = () => {
     deadline: '',
   });
   const [editingId, setEditingId] = useState<number | null>(null);
+  const [isFormModalOpen, setIsFormModalOpen] = useState(false);
+  const [alert, setAlert] = useState<{ open: boolean; message: string }>({ open: false, message: '' });
+
+  const openCreateModal = () => {
+    resetForm();
+    setIsFormModalOpen(true);
+  };
+
+  const validateForm = (): string | null => {
+    if (!formData.title.trim()) return 'Title is required';
+    if (!formData.description.trim()) return 'Description is required';
+    if (!formData.degree.trim()) return 'Degree is required';
+    if (!formData.major.trim()) return 'Major is required';
+    if (!formData.durationMonths || parseInt(formData.durationMonths, 10) < 1) return 'Duration must be at least 1 month';
+    if (!formData.isRemote && !formData.location.trim()) return 'Location is required for on-site roles';
+    if (!formData.deadline) return 'Deadline is required';
+    return null;
+  };
 
   // Fetch listings on component mount
   useEffect(() => {
@@ -95,7 +113,11 @@ const Listings: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!formData.title.trim()) return;
+    const validationError = validateForm();
+    if (validationError) {
+      setAlert({ open: true, message: validationError });
+      return;
+    }
 
     try {
       const listingData: ListingCreateRequest = {
@@ -122,13 +144,16 @@ const Listings: React.FC = () => {
         // Update existing listing
         const updatedListing = await updateListing(editingId, listingData);
         setListings(prev => prev.map(l => l.id === editingId ? updatedListing : l));
+        setAlert({ open: true, message: 'Listing updated' });
       } else {
         // Create new listing
         const newListing = await createListing(listingData);
         setListings(prev => [...prev, newListing]);
+        setAlert({ open: true, message: 'Listing created' });
       }
 
       resetForm();
+      setIsFormModalOpen(false);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to save listing');
@@ -150,6 +175,7 @@ const Listings: React.FC = () => {
       optionalSkills: listing.optional_skills.join(', '),
       deadline: listing.deadline,
     });
+    setIsFormModalOpen(true);
   };
 
   const toggleArchive = async (id: number) => {
@@ -172,7 +198,15 @@ const Listings: React.FC = () => {
   return (
     <div className="min-h-screen pt-24 bg-gray-50">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-        <h1 className="text-3xl font-bold text-gray-900 mb-6">Manage Internship Listings</h1>
+        <div className="flex items-center justify-between mb-6">
+          <h1 className="text-3xl font-bold text-gray-900">Manage Internship Listings</h1>
+          <button
+            onClick={openCreateModal}
+            className="inline-flex items-center bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+          >
+            Create Listing
+          </button>
+        </div>
 
         {/* Error Display */}
         {error && (
@@ -189,165 +223,193 @@ const Listings: React.FC = () => {
           </div>
         )}
 
-        {/* Create / Edit Form */}
-        <div className="bg-white rounded-xl shadow-md p-6 mb-10">
-          <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center space-x-2">
-            <PlusCircle className="h-5 w-5" />
-            <span>{editingId ? 'Edit Listing' : 'Create New Listing'}</span>
-          </h2>
-          <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
-              <input
-                type="text"
-                name="title"
-                required
-                value={formData.title}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Degree</label>
-              <select
-                name="degree"
-                value={formData.degree}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              >
-                <option value="">Select degree</option>
-                <option value="BSc">BSc</option>
-                <option value="BBA">BBA</option>
-                <option value="BA">BA</option>
-                <option value="MSc">MSc</option>
-                <option value="MBA">MBA</option>
-                <option value="PhD">PhD</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Major</label>
-              <select
-                name="major"
-                value={formData.major}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              >
-                <option value="">Select major</option>
-                <option value="Management">Management</option>
-                <option value="MIS">MIS</option>
-                <option value="Computer Science">Computer Science</option>
-                <option value="Data Science">Data Science</option>
-                <option value="Marketing">Marketing</option>
-                <option value="Finance">Finance</option>
-                <option value="Design">Design</option>
-                <option value="Other">Other</option>
-              </select>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Recommended CGPA (out of 4)</label>
-              <input
-                type="number"
-                name="recommendedCgpa"
-                min={0}
-                max={4}
-                step={0.01}
-                value={formData.recommendedCgpa}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Duration (months)</label>
-              <input
-                type="number"
-                name="durationMonths"
-                min={1}
-                value={formData.durationMonths}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Location Address</label>
-              <input
-                type="text"
-                name="location"
-                placeholder="e.g., Dhaka, Bangladesh"
-                value={formData.location}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div className="flex items-center">
-              <input
-                type="checkbox"
-                name="isRemote"
-                checked={formData.isRemote}
-                onChange={handleCheckboxChange}
-                className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
-              />
-              <label className="ml-2 block text-sm text-gray-700">Remote work available</label>
-            </div>
-            <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
-              <textarea
-                name="description"
-                rows={4}
-                value={formData.description}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Required Skills (comma separated)</label>
-              <input
-                type="text"
-                name="requiredSkills"
-                value={formData.requiredSkills}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Optional Skills (comma separated)</label>
-              <input
-                type="text"
-                name="optionalSkills"
-                value={formData.optionalSkills}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
-              <input
-                type="date"
-                name="deadline"
-                value={formData.deadline}
-                onChange={handleChange}
-                className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
-              />
-            </div>
-            <div className="md:col-span-2 flex items-center space-x-4">
-              <button
-                type="submit"
-                className="bg-primary-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
-              >
-                {editingId ? 'Save Changes' : 'Create Listing'}
-              </button>
-              {editingId && (
+        {/* Form Modal */}
+        {isFormModalOpen && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h2 className="text-xl font-semibold text-gray-800 flex items-center space-x-2">
+                  <PlusCircle className="h-5 w-5" />
+                  <span>{editingId ? 'Edit Listing' : 'Create New Listing'}</span>
+                </h2>
                 <button
-                  type="button"
-                  onClick={resetForm}
-                  className="text-gray-600 hover:text-gray-800 text-sm"
+                  onClick={() => setIsFormModalOpen(false)}
+                  className="text-gray-500 hover:text-gray-700 text-xl leading-none"
+                  aria-label="Close"
                 >
-                  Cancel
+                  ×
                 </button>
-              )}
+              </div>
+              <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+                  <input
+                    type="text"
+                    name="title"
+                    value={formData.title}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Degree</label>
+                  <select
+                    name="degree"
+                    value={formData.degree}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  >
+                    <option value="">Select degree</option>
+                    <option value="BSc">BSc</option>
+                    <option value="BBA">BBA</option>
+                    <option value="BA">BA</option>
+                    <option value="MSc">MSc</option>
+                    <option value="MBA">MBA</option>
+                    <option value="PhD">PhD</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Major</label>
+                  <select
+                    name="major"
+                    value={formData.major}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  >
+                    <option value="">Select major</option>
+                    <option value="Management">Management</option>
+                    <option value="MIS">MIS</option>
+                    <option value="Computer Science">Computer Science</option>
+                    <option value="Data Science">Data Science</option>
+                    <option value="Marketing">Marketing</option>
+                    <option value="Finance">Finance</option>
+                    <option value="Design">Design</option>
+                    <option value="Other">Other</option>
+                  </select>
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Recommended CGPA (out of 4)</label>
+                  <input
+                    type="number"
+                    name="recommendedCgpa"
+                    min={0}
+                    max={4}
+                    step={0.01}
+                    value={formData.recommendedCgpa}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Duration (months)</label>
+                  <input
+                    type="number"
+                    name="durationMonths"
+                    min={1}
+                    value={formData.durationMonths}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Location Address</label>
+                  <input
+                    type="text"
+                    name="location"
+                    placeholder="e.g., Dhaka, Bangladesh"
+                    value={formData.location}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div className="flex items-center">
+                  <input
+                    type="checkbox"
+                    name="isRemote"
+                    checked={formData.isRemote}
+                    onChange={handleCheckboxChange}
+                    className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+                  />
+                  <label className="ml-2 block text-sm text-gray-700">Remote work available</label>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+                  <textarea
+                    name="description"
+                    rows={4}
+                    value={formData.description}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Required Skills (comma separated)</label>
+                  <input
+                    type="text"
+                    name="requiredSkills"
+                    value={formData.requiredSkills}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Optional Skills (comma separated)</label>
+                  <input
+                    type="text"
+                    name="optionalSkills"
+                    value={formData.optionalSkills}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-1">Deadline</label>
+                  <input
+                    type="date"
+                    name="deadline"
+                    value={formData.deadline}
+                    onChange={handleChange}
+                    className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
+                  />
+                </div>
+                <div className="md:col-span-2 flex items-center space-x-4">
+                  <button
+                    type="submit"
+                    className="bg-primary-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                  >
+                    {editingId ? 'Save Changes' : 'Create Listing'}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => { resetForm(); setIsFormModalOpen(false); }}
+                    className="text-gray-600 hover:text-gray-800 text-sm"
+                  >
+                    Cancel
+                  </button>
+                </div>
+              </form>
             </div>
-          </form>
-        </div>
+          </div>
+        )}
+
+        {/* Alert Modal */}
+        {alert.open && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+            <div className="bg-white rounded-xl shadow-lg w-full max-w-sm p-6">
+              <h3 className="text-lg font-semibold text-gray-900">Notice</h3>
+              <p className="text-gray-700 mt-2">{alert.message}</p>
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={() => setAlert({ open: false, message: '' })}
+                  className="bg-primary-600 text-white px-4 py-2 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
+                >
+                  OK
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Active Listings */}
         <div className="mb-12">

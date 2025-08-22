@@ -5,39 +5,17 @@ from typing import Any, Dict, List, Tuple
 
 from rapidfuzz import fuzz, process
 
+from sentence_transformers import SentenceTransformer 
+from backend.skill_aliases import normalize_skill as _normalize_skill
 
-_MODEL = None  # Lazy-loaded embedding model; stays None if unavailable
+
+_MODEL = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
 
 
 def _get_model():
     global _MODEL
-    if _MODEL is None:
-        try:
-            # Local import to avoid importing optional heavy deps at module import time
-            from sentence_transformers import SentenceTransformer  # type: ignore
-            _MODEL = SentenceTransformer("sentence-transformers/all-MiniLM-L6-v2")
-        except Exception:
-            _MODEL = False  # sentinel meaning "unavailable"
+
     return _MODEL
-
-
-ALIASES = {
-    "reactjs": "react",
-    "react.js": "react",
-    "nextjs": "next.js",
-    "next": "next.js",
-    "ts": "typescript",
-    "js": "javascript",
-    "nodejs": "node.js",
-    "tailwind css": "tailwind",
-    "postgres": "postgresql",
-}
-
-
-def _normalize_skill(skill: str) -> str:
-    s = (skill or "").lower().strip()
-    return ALIASES.get(s, s)
-
 
 def _flatten_applicant_skills(applicant: Dict[str, Any]) -> List[str]:
     names: List[str] = []

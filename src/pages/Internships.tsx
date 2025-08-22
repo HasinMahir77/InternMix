@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { MapPin, CheckCircle, ExternalLink, Loader2 } from 'lucide-react';
-import { getStudentRecommendations, type ScoredListing, applyForInternship } from '../utils/student';
+import { getStudentRecommendations, type ScoredListing, applyForInternship, getStudentApplications, type StudentApplication } from '../utils/student';
 
 type UIListing = {
   data: ScoredListing;
@@ -15,19 +15,25 @@ const Internships = () => {
   const [selected, setSelected] = useState<UIListing | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [appliedIds, setAppliedIds] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     const load = async () => {
       if (!isAuthenticated) return;
       try {
         setLoading(true);
-        const recs = await getStudentRecommendations();
+        const [recs, apps] = await Promise.all([
+          getStudentRecommendations(),
+          getStudentApplications()
+        ]);
+        const appliedSet = new Set<number>((apps as StudentApplication[]).map(a => a.listing_id));
         const ui = recs.map(r => ({
           data: r,
           company: r.listing.created_by_name || r.listing.created_by || 'Company',
         }));
         setItems(ui);
         setSelected(ui[0] || null);
+        setAppliedIds(appliedSet);
         setError(null);
       } catch (e) {
         setError(e instanceof Error ? e.message : 'Failed to load recommendations');
@@ -131,17 +137,21 @@ const Internships = () => {
                 <div className="flex items-center space-x-4">
                   <button 
                     onClick={async () => {
+                      if (!selected) return;
+                      const id = selected.data.listing.id;
+                      if (appliedIds.has(id)) return;
                       try {
-                        await applyForInternship(selected.data.listing.id);
-                        alert('Applied successfully');
+                        await applyForInternship(id);
+                        setAppliedIds(prev => new Set(prev).add(id));
                       } catch (e) {
                         alert(e instanceof Error ? e.message : 'Failed to apply');
                       }
                     }}
-                    className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 bg-primary-600 text-white hover:bg-primary-700`}
+                    disabled={selected ? appliedIds.has(selected.data.listing.id) : false}
+                    className={`flex-1 px-6 py-3 rounded-lg font-semibold transition-colors flex items-center justify-center space-x-2 ${selected && appliedIds.has(selected.data.listing.id) ? 'bg-green-600 hover:bg-green-700' : 'bg-primary-600 hover:bg-primary-700'} text-white disabled:opacity-80`}
                   >
                     <CheckCircle className="h-5 w-5"/>
-                    <span>Apply Now</span>
+                    <span>{selected && appliedIds.has(selected.data.listing.id) ? 'Applied' : 'Apply Now'}</span>
                   </button>
                   <button className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg font-medium hover:bg-gray-200 transition-colors flex items-center justify-center space-x-2">
                     <ExternalLink className="h-5 w-5"/>

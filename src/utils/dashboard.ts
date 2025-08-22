@@ -5,7 +5,9 @@ export interface RecruiterDashboardData {
   active_postings: number;
   total_applications: number;
   new_applications: number;
-  upcoming_interviews: number;
+  accepted_applications: number;
+  rejected_applications: number;
+  pending_applications: number;
   organization_name: string;
 }
 

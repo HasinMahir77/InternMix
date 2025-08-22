@@ -451,10 +451,18 @@ def create_listing(
 @app.get("/api/listings", response_model=list[ListingResponse])
 def get_listings(
     archived: bool = False,
+    dep=Depends(get_current_user),
     db: Session = Depends(get_db)
 ):
-    """Get all listings, optionally filtered by archived status"""
-    query = db.query(Listing).filter(Listing.archived == archived)
+    """Get listings for the authenticated recruiter, filtered by archived status."""
+    user_obj, user_type = dep
+    if user_type != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can view their listings")
+
+    query = db.query(Listing).filter(
+        Listing.archived == archived,
+        Listing.recruiter_email == user_obj.email,
+    )
     listings = query.all()
     
     result = []
@@ -671,14 +679,29 @@ def get_recruiter_dashboard(
         Application.applied_at >= week_ago
     ).count()
     
-    # Get upcoming interviews (placeholder - can be expanded later)
-    upcoming_interviews = 0  # This would come from a separate interviews table
+    # Status breakdown across all listings for this recruiter
+    accepted_applications = db.query(Application).join(Listing).filter(
+        Listing.recruiter_email == user_obj.email,
+        Application.status == "accepted"
+    ).count()
+
+    rejected_applications = db.query(Application).join(Listing).filter(
+        Listing.recruiter_email == user_obj.email,
+        Application.status == "rejected"
+    ).count()
+
+    pending_applications = db.query(Application).join(Listing).filter(
+        Listing.recruiter_email == user_obj.email,
+        Application.status == "pending"
+    ).count()
     
     return {
         "active_postings": active_listings,
         "total_applications": total_applications,
         "new_applications": new_applications,
-        "upcoming_interviews": upcoming_interviews,
+        "accepted_applications": accepted_applications,
+        "rejected_applications": rejected_applications,
+        "pending_applications": pending_applications,
         "organization_name": user_obj.organization_name or "Your Company"
     }
 
@@ -1347,6 +1370,7 @@ def get_scored_applications_for_listing(
                 "major": intern.major,
                 "cgpa": intern.cgpa,
                 "profile_image_url": intern.profile_image_url,
+                "resume_url": getattr(intern, "resume_path", None),
             },
             "status": app.status,
             "similarity_score": score,
@@ -1366,6 +1390,44 @@ def get_scored_applications_for_listing(
         },
         "applications": result_list,
     }
+
+
+@app.patch("/api/applications/{application_id}/status")
+def update_application_status(
+    application_id: int,
+    payload: dict,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update the status of an application (recruiters only, own listings).
+
+    Body: { "status": "accepted" | "rejected" | "pending" | "waitlisted" }
+    """
+    user_obj, user_type = dep
+    if user_type != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can update application status")
+
+    new_status = (payload or {}).get("status")
+    allowed = {"accepted", "rejected", "pending", "waitlisted"}
+    if new_status not in allowed:
+        raise HTTPException(status_code=400, detail="Invalid status")
+
+    app_obj = db.get(Application, application_id)
+    if not app_obj:
+        raise HTTPException(status_code=404, detail="Application not found")
+
+    listing = db.get(Listing, app_obj.listing_id)
+    if not listing:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    if listing.recruiter_email != user_obj.email:
+        raise HTTPException(status_code=403, detail="Unauthorized to update applications for this listing")
+
+    app_obj.status = new_status
+    db.add(app_obj)
+    db.commit()
+    db.refresh(app_obj)
+
+    return {"message": "Status updated", "status": app_obj.status}
 
 
 @app.get("/api/student/dashboard/enhanced")
