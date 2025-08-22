@@ -179,7 +179,7 @@ def score_match(payload: Dict[str, Any]) -> Dict[str, Any]:
 
     penalty, notes = _soft_constraints_penalty(jd, app)
 
-    base = 0.45 * req_cov + 0.15 * opt_cov + 0.20 * sem_skills + 0.20 * sem_overall
+    base = 0.50 * req_cov + 0.20 * opt_cov + 0.20 * sem_skills + 0.10 * sem_overall
     final_score = max(0.0, min(1.0, base - penalty))
 
     return {
