@@ -74,9 +74,17 @@ const Internships = () => {
                   className={`p-4 rounded-lg cursor-pointer transition-all ${selected?.data.listing.id === it.data.listing.id ? 'bg-primary-50 shadow-md border border-primary-200' : 'hover:bg-gray-100'}`}
                 >
                   <div className="flex items-center space-x-3 mb-2">
-                    <div className="h-8 w-8 rounded bg-primary-100 flex items-center justify-center text-xs font-bold text-primary-700">
-                      {it.company?.slice(0,2).toUpperCase()}
-                    </div>
+                    {it.data.listing.created_by_profile_image_url ? (
+                      <img
+                        src={it.data.listing.created_by_profile_image_url}
+                        alt={it.company}
+                        className="h-8 w-8 rounded object-cover"
+                      />
+                    ) : (
+                      <div className="h-8 w-8 rounded bg-primary-100 flex items-center justify-center text-xs font-bold text-primary-700">
+                        {it.company?.slice(0,2).toUpperCase()}
+                      </div>
+                    )}
                     <div>
                       <h3 className="font-semibold text-gray-900">{it.data.listing.title}</h3>
                       <p className="text-sm text-gray-600">{it.company}</p>
@@ -107,9 +115,17 @@ const Internships = () => {
                             <span>{selected.data.listing.is_remote ? 'Remote' : selected.data.listing.location}</span>
                         </div>
                     </div>
-                    <div className="h-12 w-12 rounded bg-primary-100 flex items-center justify-center text-sm font-bold text-primary-700">
-                      {selected.company?.slice(0,2).toUpperCase()}
-                    </div>
+                    {selected.data.listing.created_by_profile_image_url ? (
+                      <img
+                        src={selected.data.listing.created_by_profile_image_url}
+                        alt={selected.company}
+                        className="h-12 w-12 rounded object-cover"
+                      />
+                    ) : (
+                      <div className="h-12 w-12 rounded bg-primary-100 flex items-center justify-center text-sm font-bold text-primary-700">
+                        {selected.company?.slice(0,2).toUpperCase()}
+                      </div>
+                    )}
                 </div>
                 
                 <div className="border-t border-gray-200 my-6"></div>

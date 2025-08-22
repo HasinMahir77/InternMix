@@ -149,6 +149,7 @@ class ListingResponse(BaseModel):
     created_by_name: str
     created_at: str
     applications_count: int
+    created_by_profile_image_url: Optional[str] = None
 
 
 app = FastAPI(
@@ -445,6 +446,7 @@ def create_listing(
         created_by_name=_recruiter_display_name(user_obj),
         created_at=listing.created_at.isoformat(),
         applications_count=0,
+        created_by_profile_image_url=user_obj.profile_image_url,
     )
 
 
@@ -492,6 +494,7 @@ def get_listings(
             created_by_name=recruiter_name,
             created_at=listing.created_at.isoformat(),
             applications_count=applications_count,
+            created_by_profile_image_url=(recruiter.profile_image_url if recruiter else None),
         ))
     
     return result
@@ -532,6 +535,7 @@ def get_listing(
         created_by_name=recruiter_name,
         created_at=listing.created_at.isoformat(),
         applications_count=applications_count,
+        created_by_profile_image_url=(recruiter.profile_image_url if recruiter else None),
     )
 
 
@@ -589,6 +593,7 @@ def update_listing(
         created_by_name=recruiter_name,
         created_at=listing.created_at.isoformat(),
         applications_count=applications_count,
+        created_by_profile_image_url=(recruiter.profile_image_url if recruiter else None),
     )
 
 
@@ -1313,6 +1318,7 @@ def get_student_recommendations(dep=Depends(get_current_user), db: Session = Dep
                 "created_by_name": recruiter_name,
                 "created_at": listing.created_at.isoformat(),
                 "applications_count": applications_count,
+                "created_by_profile_image_url": (recruiter.profile_image_url if recruiter else None),
             },
             "final_score": score,
             "components": result.get("components"),

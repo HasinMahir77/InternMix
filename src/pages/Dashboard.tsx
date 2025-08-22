@@ -132,13 +132,24 @@ const Dashboard = () => {
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
                   <div className="flex items-center space-x-3 mb-4">
                     <div className="bg-green-100 p-2 rounded-lg">
-                      <Calendar className="h-6 w-6 text-green-600" />
+                      <CheckCircle className="h-6 w-6 text-green-600" />
                     </div>
-                    <h3 className="text-lg font-semibold text-gray-900">Interviews</h3>
+                    <h3 className="text-lg font-semibold text-gray-900">Application Status</h3>
                   </div>
-                  <p className="text-gray-600 mb-4">Upcoming interviews</p>
-                  <div className="text-2xl font-bold text-green-600">
-                    {studentData?.upcoming_interviews || 0} Scheduled
+                  <p className="text-gray-600 mb-4">Accepted, pending, and rejected applications</p>
+                  <div className="grid grid-cols-3 gap-4">
+                    <div className="text-center">
+                      <div className="text-xs uppercase tracking-wide text-gray-500">Accepted</div>
+                      <div className="text-xl font-bold text-green-600">{enhancedStudentData?.accepted_applications || 0}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs uppercase tracking-wide text-gray-500">Pending</div>
+                      <div className="text-xl font-bold text-yellow-600">{enhancedStudentData?.pending_applications || 0}</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-xs uppercase tracking-wide text-gray-500">Rejected</div>
+                      <div className="text-xl font-bold text-red-600">{(enhancedStudentData?.status_breakdown && enhancedStudentData.status_breakdown['rejected']) || 0}</div>
+                    </div>
                   </div>
                 </div>
 

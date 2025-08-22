@@ -48,6 +48,7 @@ export interface ListingResponse {
   created_by_name: string;
   created_at: string;
   applications_count: number;
+  created_by_profile_image_url?: string | null;
 }
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
