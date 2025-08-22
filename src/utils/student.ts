@@ -93,6 +93,18 @@ export interface EnhancedStudentDashboard {
   };
 }
 
+export interface ScoredListing {
+  listing: import('./listings').ListingResponse;
+  final_score: number;
+  components?: Record<string, number>;
+  explanations?: {
+    matched_required?: string[];
+    matched_optional?: string[];
+    missing_required?: string[];
+    notes?: string[];
+  };
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // Helper function to get auth headers
@@ -245,6 +257,21 @@ export const getEnhancedStudentDashboard = async (): Promise<EnhancedStudentDash
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.detail || 'Failed to fetch enhanced dashboard data');
+  }
+
+  return response.json();
+};
+
+// Get student recommendations (sorted listings)
+export const getStudentRecommendations = async (): Promise<ScoredListing[]> => {
+  const response = await fetch(`${API_BASE}/api/student/recommendations`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to fetch recommendations');
   }
 
   return response.json();

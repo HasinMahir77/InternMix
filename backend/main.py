@@ -22,6 +22,7 @@ if str(PROJECT_ROOT) not in sys.path:
     sys.path.insert(0, str(PROJECT_ROOT))
 
 from backend.models import Base, Intern, Recruiter, Listing, Application
+from backend.matching import score_match
 
 # Database setup (SQLite)
 DATABASE_URL = os.getenv("INTERNMIX_DATABASE_URL", "sqlite:///./app.db")
@@ -240,6 +241,16 @@ def ensure_listings_columns():
 ensure_listings_columns()
 
 
+# Helper to determine display name for a recruiter
+def _recruiter_display_name(recruiter: Recruiter | None) -> str:
+    if not recruiter:
+        return "Unknown"
+    org = (recruiter.organization_name or "").strip()
+    if org:
+        return org
+    return f"{recruiter.first_name} {recruiter.last_name}".strip()
+
+
 # Development middleware
 if DEBUG_MODE:
     @app.middleware("http")
@@ -431,7 +442,7 @@ def create_listing(
         deadline=listing.deadline,
         archived=listing.archived,
         created_by=listing.recruiter_email,
-        created_by_name=f"{user_obj.first_name} {user_obj.last_name}",
+        created_by_name=_recruiter_display_name(user_obj),
         created_at=listing.created_at.isoformat(),
         applications_count=0,
     )
@@ -450,7 +461,7 @@ def get_listings(
     for listing in listings:
         # Get recruiter info
         recruiter = db.get(Recruiter, listing.recruiter_email)
-        recruiter_name = f"{recruiter.first_name} {recruiter.last_name}" if recruiter else "Unknown"
+        recruiter_name = _recruiter_display_name(recruiter)
         
         # Count applications
         applications_count = db.query(Application).filter(Application.listing_id == listing.id).count()
@@ -490,7 +501,7 @@ def get_listing(
     
     # Get recruiter info
     recruiter = db.get(Recruiter, listing.recruiter_email)
-    recruiter_name = f"{recruiter.first_name} {recruiter.last_name}" if recruiter else "Unknown"
+    recruiter_name = _recruiter_display_name(recruiter)
     
     # Count applications
     applications_count = db.query(Application).filter(Application.listing_id == listing.id).count()
@@ -547,7 +558,7 @@ def update_listing(
     
     # Get recruiter info
     recruiter = db.get(Recruiter, listing.recruiter_email)
-    recruiter_name = f"{recruiter.first_name} {recruiter.last_name}" if recruiter else "Unknown"
+    recruiter_name = _recruiter_display_name(recruiter)
     
     # Count applications
     applications_count = db.query(Application).filter(Application.listing_id == listing.id).count()
@@ -1072,12 +1083,23 @@ def apply_for_internship(
     if existing_application:
         raise HTTPException(status_code=400, detail="You have already applied for this internship")
     
-    # Create new application
+    # Create new application with initial similarity score using ML model
+    initial_score = 0.0
+    try:
+        # Build applicant payload from stored parsed resume/github + profile
+        intern = db.get(Intern, user_obj.email)
+        applicant_payload = _build_applicant_payload_from_intern(intern)
+        jd_payload = _build_listing_payload(listing)
+        result = score_match({"internship": jd_payload, "applicant": applicant_payload})
+        initial_score = float(result.get("final_score", 0.0))
+    except Exception:
+        initial_score = 0.0
+
     application = Application(
         listing_id=listing_id,
         intern_email=user_obj.email,
         status="pending",
-        similarity_score=0.0  # This would be calculated by ML model later
+        similarity_score=initial_score
     )
     
     try:
@@ -1145,6 +1167,204 @@ def get_application_details(
             "name": recruiter.organization_name if recruiter else "Unknown Company",
             "email": listing.recruiter_email
         }
+    }
+
+
+# ---------- Matching helpers and endpoints ----------
+
+def _build_applicant_payload_from_intern(intern: Intern) -> dict:
+    # Prefer parsed resume/github JSON; fallback to minimal structure from profile
+    resume_parsed = intern.resume_parsed if hasattr(intern, "resume_parsed") else None
+    github_parsed = intern.github_parsed if hasattr(intern, "github_parsed") else None
+
+    personal = {
+        "first_name": intern.first_name,
+        "last_name": intern.last_name,
+        "email": intern.email,
+        "cgpa": intern.cgpa,
+        "address": None,
+        "phone": None,
+        "dob": None,
+        "nationality": None,
+    }
+
+    education = []
+    if intern.degree or intern.major or intern.institution:
+        education.append({
+            "title": f"{intern.degree or ''} in {intern.major or ''}".strip(),
+            "organisation": intern.institution,
+            "start": None,
+            "end": None,
+            "city": None,
+        })
+
+    applicant: dict = {
+        "personal": personal,
+        "education": education,
+        "experience": [],
+        "languages": [],
+        "skills": [],
+    }
+
+    # Merge parsed data if present
+    if isinstance(resume_parsed, dict):
+        # Shallow merge known keys
+        for key in ("personal", "education", "experience", "languages", "skills"):
+            if key in resume_parsed and resume_parsed[key]:
+                applicant[key] = resume_parsed[key]
+        # Ensure CGPA from profile overrides if available
+        if intern.cgpa is not None:
+            applicant.setdefault("personal", {})["cgpa"] = intern.cgpa
+
+    if isinstance(github_parsed, dict) and github_parsed:
+        applicant["github"] = github_parsed
+
+    return applicant
+
+
+def _build_listing_payload(listing: Listing) -> dict:
+    return {
+        "id": listing.id,
+        "recruiter_email": listing.recruiter_email,
+        "title": listing.title,
+        "description": listing.description,
+        "degree": listing.degree,
+        "major": listing.major,
+        "recommended_cgpa": listing.recommended_cgpa,
+        "duration_months": listing.duration_months,
+        "location": listing.location,
+        "is_remote": listing.is_remote,
+        "required_skills": listing.required_skills or [],
+        "optional_skills": listing.optional_skills or [],
+        "deadline": listing.deadline,
+        "archived": listing.archived,
+        "created_at": listing.created_at.isoformat() if listing.created_at else None,
+    }
+
+
+@app.get("/api/student/recommendations")
+def get_student_recommendations(dep=Depends(get_current_user), db: Session = Depends(get_db)):
+    user_obj, user_type = dep
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can access recommendations")
+
+    intern = db.get(Intern, user_obj.email)
+    if not intern:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    applicant_payload = _build_applicant_payload_from_intern(intern)
+
+    listings = db.query(Listing).filter(Listing.archived == False).all()
+    scored: list[dict] = []
+    for listing in listings:
+        try:
+            jd_payload = _build_listing_payload(listing)
+            result = score_match({"internship": jd_payload, "applicant": applicant_payload})
+            score = float(result.get("final_score", 0.0))
+        except Exception:
+            score = 0.0
+            result = {"components": {}, "explanations": {"notes": ["scoring_failed"]}}
+
+        # Count applications
+        applications_count = db.query(Application).filter(Application.listing_id == listing.id).count()
+
+        recruiter = db.get(Recruiter, listing.recruiter_email)
+        recruiter_name = _recruiter_display_name(recruiter)
+
+        scored.append({
+            "listing": {
+                "id": listing.id,
+                "title": listing.title,
+                "description": listing.description,
+                "degree": listing.degree,
+                "major": listing.major,
+                "recommended_cgpa": listing.recommended_cgpa,
+                "duration_months": listing.duration_months,
+                "location": listing.location,
+                "is_remote": listing.is_remote,
+                "required_skills": listing.required_skills,
+                "optional_skills": listing.optional_skills,
+                "deadline": listing.deadline,
+                "archived": listing.archived,
+                "created_by": listing.recruiter_email,
+                "created_by_name": recruiter_name,
+                "created_at": listing.created_at.isoformat(),
+                "applications_count": applications_count,
+            },
+            "final_score": score,
+            "components": result.get("components"),
+            "explanations": result.get("explanations"),
+        })
+
+    scored.sort(key=lambda x: x.get("final_score", 0.0), reverse=True)
+    return scored
+
+
+@app.get("/api/listings/{listing_id}/applications/scored")
+def get_scored_applications_for_listing(
+    listing_id: int,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_obj, user_type = dep
+    if user_type != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can access applicants list")
+
+    listing = db.get(Listing, listing_id)
+    if not listing:
+        raise HTTPException(status_code=404, detail="Listing not found")
+    if listing.recruiter_email != user_obj.email:
+        raise HTTPException(status_code=403, detail="Unauthorized to view applications for this listing")
+
+    jd_payload = _build_listing_payload(listing)
+    # Get all applications joined with interns
+    entries = db.query(Application, Intern).join(Intern, Application.intern_email == Intern.email).filter(
+        Application.listing_id == listing_id
+    ).all()
+
+    result_list: list[dict] = []
+    for app, intern in entries:
+        try:
+            applicant_payload = _build_applicant_payload_from_intern(intern)
+            result = score_match({"internship": jd_payload, "applicant": applicant_payload})
+            score = float(result.get("final_score", 0.0))
+        except Exception:
+            score = 0.0
+            result = {"components": {}, "explanations": {"notes": ["scoring_failed"]}}
+
+        # Persist score if changed
+        if app.similarity_score != score:
+            app.similarity_score = score
+            db.add(app)
+
+        result_list.append({
+            "application_id": app.id,
+            "intern": {
+                "email": intern.email,
+                "first_name": intern.first_name,
+                "last_name": intern.last_name,
+                "degree": intern.degree,
+                "major": intern.major,
+                "cgpa": intern.cgpa,
+                "profile_image_url": intern.profile_image_url,
+            },
+            "status": app.status,
+            "similarity_score": score,
+            "components": result.get("components"),
+            "explanations": result.get("explanations"),
+            "applied_at": app.applied_at.isoformat() if app.applied_at else None,
+        })
+
+    # Commit any score updates in bulk
+    db.commit()
+
+    result_list.sort(key=lambda x: x.get("similarity_score", 0.0), reverse=True)
+    return {
+        "listing": {
+            "id": listing.id,
+            "title": listing.title,
+        },
+        "applications": result_list,
     }
 
 

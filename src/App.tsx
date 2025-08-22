@@ -14,6 +14,7 @@ import Applications from './pages/Applications';
 import OrgProfile from './pages/OrgProfile';
 import Chat from './pages/Chat';
 import Listings from './pages/Listings';
+import ListingApplications from './pages/ListingApplications';
 import { AuthProvider } from './context/AuthContext';
 import ForStudents from './pages/ForStudents';
 import ForCompanies from './pages/ForCompanies';
@@ -37,6 +38,7 @@ function App() {
               <Route path="/internships" element={<Internships />} />
               <Route path="/listings" element={<Listings />} />
               <Route path="/applications" element={<Applications />} />
+              <Route path="/listing-applications" element={<ListingApplications />} />
               <Route path="/chat" element={<Chat />} />
               <Route path="/about" element={<About />} />
               <Route path="/contact" element={<Contact />} />

@@ -5,3 +5,7 @@ passlib[bcrypt]==1.7.4
 python-jose==3.3.0
 pydantic==2.9.0
 
+# ML matching
+sentence-transformers==3.0.1
+rapidfuzz==3.9.6
+

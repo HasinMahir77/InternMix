@@ -23,6 +23,29 @@ export interface RecruiterProfileUpdate {
   active?: boolean;
 }
 
+export interface ScoredApplicationEntry {
+  application_id: number;
+  intern: {
+    email: string;
+    first_name: string;
+    last_name: string;
+    degree: string | null;
+    major: string | null;
+    cgpa: number | null;
+    profile_image_url: string | null;
+  };
+  status: string;
+  similarity_score: number;
+  components?: Record<string, number>;
+  explanations?: Record<string, unknown>;
+  applied_at: string | null;
+}
+
+export interface ScoredApplicationsResponse {
+  listing: { id: number; title: string };
+  applications: ScoredApplicationEntry[];
+}
+
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 const getAuthHeaders = () => {
@@ -72,6 +95,18 @@ export const uploadRecruiterProfileImage = async (file: File): Promise<{ profile
   if (!response.ok) {
     const error = await response.json().catch(() => ({}));
     throw new Error(error.detail || 'Failed to upload profile image');
+  }
+  return response.json();
+};
+
+export const getScoredApplicationsForListing = async (listingId: number): Promise<ScoredApplicationsResponse> => {
+  const response = await fetch(`${API_BASE}/api/listings/${listingId}/applications/scored`, {
+    method: 'GET',
+    headers: getAuthHeaders(),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to fetch scored applications');
   }
   return response.json();
 };

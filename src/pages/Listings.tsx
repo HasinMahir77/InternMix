@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import { PlusCircle, Archive, Pen, RotateCcw, Users, Loader2 } from 'lucide-react';
 import { 
   createListing, 
@@ -17,6 +17,7 @@ import {
 
 const Listings: React.FC = () => {
   const { isAuthenticated, userType } = useAuth();
+  const navigate = useNavigate();
 
   const [listings, setListings] = useState<ListingResponse[]>([]);
   const [loading, setLoading] = useState(true);
@@ -161,9 +162,8 @@ const Listings: React.FC = () => {
     }
   };
 
-  const handleViewApplicants = () => {
-    // For now, we'll show a placeholder since applications aren't implemented yet
-    alert('Applications feature coming soon!');
+  const handleViewApplicants = (listingId: number) => {
+    navigate(`/listing-applications?listingId=${listingId}`);
   };
 
   const activeListings = listings.filter((l) => !l.archived);
@@ -395,7 +395,7 @@ const Listings: React.FC = () => {
                     </div>
                     <div className="flex flex-col space-y-2 items-end">
                       <button
-                        onClick={() => handleViewApplicants()}
+                        onClick={() => handleViewApplicants(listing.id)}
                         className="inline-flex items-center justify-center px-4 py-2 text-sm bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 w-40"
                       >
                         <Users className="h-4 w-4 mr-1" /> View Applications ({listing.applications_count})
