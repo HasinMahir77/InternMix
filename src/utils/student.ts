@@ -15,6 +15,8 @@ export interface StudentProfile {
   github_url: string | null;
   profile_image_url: string | null;
   created_at: string | null;
+  resume_parsed?: Record<string, unknown> | null;
+  github_parsed?: Record<string, unknown> | null;
 }
 
 export interface StudentProfileUpdate {
@@ -130,6 +132,60 @@ export const updateStudentProfile = async (profileData: StudentProfileUpdate): P
     throw new Error(error.detail || 'Failed to update student profile');
   }
 
+  return response.json();
+};
+
+// -------- File upload endpoints --------
+
+// Upload profile image (multipart/form-data)
+export const uploadProfileImage = async (file: File): Promise<{ profile_image_url: string }> => {
+  const token = getToken();
+  const form = new FormData();
+  form.append('file', file);
+  const response = await fetch(`${API_BASE}/api/student/profile/image`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: form,
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to upload profile image');
+  }
+  return response.json();
+};
+
+// Upload resume PDF (multipart/form-data)
+export const uploadResumePdf = async (file: File): Promise<{ resume_url: string }> => {
+  const token = getToken();
+  const form = new FormData();
+  form.append('file', file);
+  const response = await fetch(`${API_BASE}/api/student/resume/pdf`, {
+    method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${token}`,
+    },
+    body: form,
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to upload resume PDF');
+  }
+  return response.json();
+};
+
+// Save parsed resume/github data
+export const saveParsedData = async (payload: { resume_parsed?: unknown; github_parsed?: unknown; }): Promise<{ message: string }> => {
+  const response = await fetch(`${API_BASE}/api/student/parsed`, {
+    method: 'POST',
+    headers: getAuthHeaders(),
+    body: JSON.stringify(payload),
+  });
+  if (!response.ok) {
+    const error = await response.json().catch(() => ({}));
+    throw new Error(error.detail || 'Failed to save parsed data');
+  }
   return response.json();
 };
 

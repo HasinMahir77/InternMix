@@ -4,14 +4,17 @@ from typing import Optional
 import sys
 from pathlib import Path
 
-from fastapi import FastAPI, Depends, HTTPException, status, Header
+from fastapi import FastAPI, Depends, HTTPException, status, Header, UploadFile, File, Request
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel
 from sqlalchemy import create_engine, select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, Session
 from passlib.context import CryptContext
 from jose import jwt, JWTError
+import uuid
+import shutil
 
 # Ensure project root is on sys.path so `python backend/main.py` works
 PROJECT_ROOT = Path(__file__).resolve().parents[1]
@@ -164,6 +167,54 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Filesystem storage setup (relative to this server script directory)
+BASE_DIR = Path(__file__).resolve().parent
+UPLOAD_ROOT = BASE_DIR / "uploads"
+PROFILE_IMG_DIR = UPLOAD_ROOT / "profile_images"
+RESUMES_DIR = UPLOAD_ROOT / "resumes"
+for d in (UPLOAD_ROOT, PROFILE_IMG_DIR, RESUMES_DIR):
+    d.mkdir(parents=True, exist_ok=True)
+
+# Serve uploads as static files
+app.mount("/uploads", StaticFiles(directory=str(UPLOAD_ROOT)), name="uploads")
+
+
+# Simple SQLite migrations to add new columns if missing
+def ensure_intern_columns():
+    if not DATABASE_URL.startswith("sqlite"):  # minimal support; extend for other DBs as needed
+        return
+    with engine.connect() as conn:
+        res = conn.exec_driver_sql("PRAGMA table_info(interns)")
+        cols = {row[1] for row in res.fetchall()}
+        migrations = []
+        if "profile_image_path" not in cols:
+            migrations.append("ALTER TABLE interns ADD COLUMN profile_image_path TEXT")
+        if "resume_pdf_path" not in cols:
+            migrations.append("ALTER TABLE interns ADD COLUMN resume_pdf_path TEXT")
+        if "resume_parsed" not in cols:
+            migrations.append("ALTER TABLE interns ADD COLUMN resume_parsed TEXT")
+        if "github_parsed" not in cols:
+            migrations.append("ALTER TABLE interns ADD COLUMN github_parsed TEXT")
+        for stmt in migrations:
+            conn.exec_driver_sql(stmt)
+
+
+ensure_intern_columns()
+
+
+def ensure_recruiter_columns():
+    if not DATABASE_URL.startswith("sqlite"):
+        return
+    with engine.connect() as conn:
+        res = conn.exec_driver_sql("PRAGMA table_info(recruiters)")
+        cols = {row[1] for row in res.fetchall()}
+        if "profile_image_path" not in cols:
+            conn.exec_driver_sql("ALTER TABLE recruiters ADD COLUMN profile_image_path TEXT")
+
+
+ensure_recruiter_columns()
+
 
 # Development middleware
 if DEBUG_MODE:
@@ -702,7 +753,9 @@ def get_student_profile(
         "resume_path": student.resume_path,
         "github_url": student.github_url,
         "profile_image_url": student.profile_image_url,
-        "created_at": student.created_at.isoformat() if student.created_at else None
+        "created_at": student.created_at.isoformat() if student.created_at else None,
+        "resume_parsed": student.resume_parsed,
+        "github_parsed": student.github_parsed,
     }
 
 
@@ -741,6 +794,182 @@ def update_student_profile(
     except Exception as e:
         db.rollback()
         raise HTTPException(status_code=500, detail="Failed to update profile")
+
+
+# -------- File upload and parsed data endpoints --------
+
+def _build_public_url(request: Request, relative_path: Path) -> str:
+    base = str(request.base_url).rstrip('/')
+    # Ensure forward slashes for URLs
+    rel = str(relative_path).replace('\\', '/')
+    return f"{base}/{rel.lstrip('/')}"
+
+
+@app.post("/api/student/profile/image")
+async def upload_profile_image(
+    request: Request,
+    file: UploadFile = File(...),
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_obj, user_type = dep
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can upload profile image")
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image")
+
+    suffix = {
+        "image/jpeg": ".jpg",
+        "image/png": ".png",
+        "image/webp": ".webp",
+    }.get(file.content_type, ".img")
+    filename = f"{user_obj.email.replace('@', '_at_').replace('.', '_')}_{uuid.uuid4().hex}{suffix}"
+    dest_path = PROFILE_IMG_DIR / filename
+
+    with dest_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    # Save URLs and absolute path
+    public_relative = Path("uploads") / "profile_images" / filename
+    public_url = _build_public_url(request, public_relative)
+
+    student = db.get(Intern, user_obj.email)
+    student.profile_image_path = str(dest_path)
+    student.profile_image_url = public_url
+    db.commit()
+
+    return {"profile_image_url": public_url}
+
+
+@app.post("/api/student/resume/pdf")
+async def upload_resume_pdf(
+    request: Request,
+    file: UploadFile = File(...),
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_obj, user_type = dep
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can upload resume")
+    if file.content_type != "application/pdf":
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload a PDF")
+
+    filename = f"{user_obj.email.replace('@', '_at_').replace('.', '_')}_{uuid.uuid4().hex}.pdf"
+    dest_path = RESUMES_DIR / filename
+
+    with dest_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+
+    public_relative = Path("uploads") / "resumes" / filename
+    public_url = _build_public_url(request, public_relative)
+
+    student = db.get(Intern, user_obj.email)
+    student.resume_pdf_path = str(dest_path)
+    student.resume_path = public_url
+    db.commit()
+
+    return {"resume_url": public_url}
+
+
+class ParsedDataRequest(BaseModel):
+    resume_parsed: Optional[dict] = None
+    github_parsed: Optional[dict] = None
+
+
+@app.post("/api/student/parsed")
+def save_parsed_data(
+    payload: ParsedDataRequest,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_obj, user_type = dep
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can save parsed data")
+
+    student = db.get(Intern, user_obj.email)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student not found")
+
+    if payload.resume_parsed is not None:
+        student.resume_parsed = payload.resume_parsed
+    if payload.github_parsed is not None:
+        student.github_parsed = payload.github_parsed
+    db.commit()
+    return {"message": "Parsed data saved"}
+
+
+# -------- Recruiter profile endpoints --------
+
+@app.get("/api/recruiter/profile")
+def get_recruiter_profile(dep=Depends(get_current_user), db: Session = Depends(get_db)):
+    user_obj, user_type = dep
+    if user_type != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can access this endpoint")
+    recruiter = db.get(Recruiter, user_obj.email)
+    if not recruiter:
+        raise HTTPException(status_code=404, detail="Recruiter profile not found")
+    return {
+        "email": recruiter.email,
+        "organization_name": recruiter.organization_name,
+        "first_name": recruiter.first_name,
+        "last_name": recruiter.last_name,
+        "designation": recruiter.designation,
+        "phone": recruiter.phone,
+        "profile_image_url": recruiter.profile_image_url,
+        "website": recruiter.website,
+        "active": recruiter.active,
+        "created_at": recruiter.created_at.isoformat() if recruiter.created_at else None,
+    }
+
+
+@app.put("/api/recruiter/profile")
+def update_recruiter_profile(
+    profile_data: dict,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_obj, user_type = dep
+    if user_type != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can update profile")
+    recruiter = db.get(Recruiter, user_obj.email)
+    if not recruiter:
+        raise HTTPException(status_code=404, detail="Recruiter profile not found")
+    allowed = ["organization_name", "first_name", "last_name", "designation", "phone", "website", "active"]
+    for field, value in profile_data.items():
+        if field in allowed and hasattr(recruiter, field):
+            setattr(recruiter, field, value)
+    try:
+        db.commit()
+        return {"message": "Profile updated"}
+    except Exception:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to update profile")
+
+
+@app.post("/api/recruiter/profile/image")
+async def upload_recruiter_profile_image(
+    request: Request,
+    file: UploadFile = File(...),
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    user_obj, user_type = dep
+    if user_type != "recruiter":
+        raise HTTPException(status_code=403, detail="Only recruiters can upload profile image")
+    if not file.content_type or not file.content_type.startswith("image/"):
+        raise HTTPException(status_code=400, detail="Invalid file type. Please upload an image")
+    suffix = {"image/jpeg": ".jpg", "image/png": ".png", "image/webp": ".webp"}.get(file.content_type, ".img")
+    filename = f"{user_obj.email.replace('@', '_at_').replace('.', '_')}_{uuid.uuid4().hex}{suffix}"
+    dest_path = PROFILE_IMG_DIR / filename
+    with dest_path.open("wb") as buffer:
+        shutil.copyfileobj(file.file, buffer)
+    public_relative = Path("uploads") / "profile_images" / filename
+    public_url = _build_public_url(request, public_relative)
+    recruiter = db.get(Recruiter, user_obj.email)
+    recruiter.profile_image_path = str(dest_path)
+    recruiter.profile_image_url = public_url
+    db.commit()
+    return {"profile_image_url": public_url}
 
 
 @app.get("/api/student/applications")

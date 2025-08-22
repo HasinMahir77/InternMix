@@ -4,6 +4,7 @@ import { Navigate } from 'react-router-dom';
 import { UploadCloud, Github, User, GraduationCap, Briefcase, Languages } from 'lucide-react';
 import { getUserReposSummary, extractUsernameFromUrl } from '../utils/github';
 import { setupPdfWorker, parseEuropassPdf, type InternMixCV } from '../utils/europass.util';
+import { uploadResumePdf, saveParsedData } from '../utils/student';
 
 // Normalize simple HTML (p/br) to plain text and strip other tags
 function stripAndNormalizeHtml(html: string): string {
@@ -97,6 +98,12 @@ const Resume = () => {
         const parsedData = await parseEuropassPdf(resumeFile);
         setParsedResume(parsedData);
         console.log('Parsed Resume Data:', parsedData);
+        // Upload the resume PDF to server
+        try {
+          await uploadResumePdf(resumeFile);
+        } catch (e) {
+          console.error('Resume upload failed:', e);
+        }
       }
       
       if (githubUrl) {
@@ -105,6 +112,17 @@ const Resume = () => {
       
       if (resumeFile || githubUrl) {
         setIsUploaded(true);
+        // Persist parsed data using local variables to avoid state race
+        try {
+          const toSave: { resume_parsed?: unknown; github_parsed?: unknown } = {};
+          if (parsedResume) toSave.resume_parsed = parsedResume;
+          if (githubData) toSave.github_parsed = githubData;
+          if (toSave.resume_parsed || toSave.github_parsed) {
+            await saveParsedData(toSave);
+          }
+        } catch (e) {
+          console.error('Saving parsed data failed:', e);
+        }
       }
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : 'An error occurred while processing your request.';

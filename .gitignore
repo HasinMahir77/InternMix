@@ -25,3 +25,4 @@ dist-ssr
 .env
 EuroResume.pdf
 /backend/__pycache__
+/backend/uploads

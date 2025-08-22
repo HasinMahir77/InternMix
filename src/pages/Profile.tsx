@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
 import { Edit3, Camera, Loader2, CheckCircle, AlertCircle } from 'lucide-react';
-import { getStudentProfile, updateStudentProfile, type StudentProfile, type StudentProfileUpdate } from '../utils/student';
-import profilePic from '../dummy-assets/Student/dp.jpg';
+import { getStudentProfile, updateStudentProfile, uploadProfileImage, type StudentProfile, type StudentProfileUpdate } from '../utils/student';
 
 const Profile = () => {
   const { isAuthenticated, currentUser } = useAuth();
@@ -77,14 +76,21 @@ const Profile = () => {
     setEditData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handlePictureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handlePictureChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const reader = new FileReader();
-      reader.onload = (event) => {
-        // In a real app, you'd upload this to a server
-        console.log('Profile picture changed:', event.target?.result);
-      };
-      reader.readAsDataURL(e.target.files[0]);
+      try {
+        setSaving(true);
+        setError(null);
+        const resp = await uploadProfileImage(e.target.files[0]);
+        // Refresh profile to get new URL
+        const updatedProfile = await getStudentProfile();
+        setProfile(updatedProfile);
+        setSuccess('Profile image updated');
+      } catch (err) {
+        setError(err instanceof Error ? err.message : 'Failed to upload profile image');
+      } finally {
+        setSaving(false);
+      }
     }
   };
 
@@ -185,11 +191,17 @@ const Profile = () => {
 
             <div className="mt-8 flex flex-col md:flex-row items-center md:items-start md:space-x-8">
               <div className="relative mb-6 md:mb-0">
-                <img
-                  src={profile.profile_image_url || profilePic}
-                  alt="Profile"
-                  className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-md"
-                />
+                {profile.profile_image_url ? (
+                  <img
+                    src={profile.profile_image_url}
+                    alt="Profile"
+                    className="h-32 w-32 rounded-full object-cover border-4 border-white shadow-md"
+                  />
+                ) : (
+                  <div className="h-32 w-32 rounded-full bg-gray-200 flex items-center justify-center text-2xl font-semibold text-gray-600 border-4 border-white shadow-md">
+                    {(profile.first_name[0] + (profile.last_name?.[0] || '')).toUpperCase()}
+                  </div>
+                )}
                 {isEditing && (
                   <label
                     htmlFor="profilePicture"
