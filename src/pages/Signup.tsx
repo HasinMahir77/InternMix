@@ -20,6 +20,7 @@ const Signup = () => {
     phoneNum: '',
     cgpa: '',
     company: '',
+    designation: '',
     recruiterPhone: '',
     terms: false,
   });
@@ -43,6 +44,8 @@ const Signup = () => {
       degree: userType === 'student' ? formData.degree : undefined,
       major: userType === 'student' ? formData.major : undefined,
       phone_num: userType === 'student' ? formData.phoneNum : formData.recruiterPhone,
+      organization_name: userType === 'company' ? formData.company : undefined,
+      designation: userType === 'company' ? formData.designation : undefined,
       cgpa: userType === 'student' && formData.cgpa !== '' ? Number(formData.cgpa) : undefined,
     } as const;
     const res = await signup(payload);
@@ -284,6 +287,21 @@ const Signup = () => {
                         placeholder="Acme Inc."
                       />
                     </div>
+                  </div>
+                  <div>
+                    <label htmlFor="designation" className="block text-sm font-medium text-gray-700 mb-1">
+                      Designation
+                    </label>
+                    <input
+                      id="designation"
+                      name="designation"
+                      type="text"
+                      required
+                      value={formData.designation}
+                      onChange={handleChange}
+                      className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                      placeholder="e.g., HR Manager"
+                    />
                   </div>
                   <div>
                     <label htmlFor="recruiterPhone" className="block text-sm font-medium text-gray-700 mb-1">

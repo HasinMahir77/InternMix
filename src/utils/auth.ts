@@ -66,6 +66,8 @@ export const signup = async (payload: {
   major?: string;
   phone_num?: string;
   cgpa?: number;
+  organization_name?: string;
+  designation?: string;
 }): Promise<{ success: boolean; user?: AuthUser; error?: string }> => {
   try {
     const res = await fetch(`${API_BASE}/api/auth/signup`, {

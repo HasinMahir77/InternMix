@@ -76,6 +76,9 @@ class SignupRequest(BaseModel):
     major: Optional[str] = None  # For students
     phone_num: Optional[str] = None  # For both students and recruiters
     cgpa: Optional[float] = None  # For students
+    # Recruiter-specific fields collected during signup
+    organization_name: Optional[str] = None
+    designation: Optional[str] = None
 
 
 class LoginRequest(BaseModel):
@@ -257,6 +260,8 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
             first_name=payload.first_name.strip(),
             last_name=payload.last_name.strip(),
             phone=payload.phone_num.strip() if payload.phone_num else None,
+            organization_name=payload.organization_name.strip() if payload.organization_name else None,
+            designation=payload.designation.strip() if payload.designation else None,
         )
     db.add(user)
     try:
