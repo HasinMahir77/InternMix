@@ -161,7 +161,7 @@ const Listings: React.FC = () => {
     }
   };
 
-  const handleViewApplicants = (listing: ListingResponse) => {
+  const handleViewApplicants = () => {
     // For now, we'll show a placeholder since applications aren't implemented yet
     alert('Applications feature coming soon!');
   };
@@ -395,7 +395,7 @@ const Listings: React.FC = () => {
                     </div>
                     <div className="flex flex-col space-y-2 items-end">
                       <button
-                        onClick={() => handleViewApplicants(listing)}
+                        onClick={() => handleViewApplicants()}
                         className="inline-flex items-center justify-center px-4 py-2 text-sm bg-secondary-500 text-white rounded-lg hover:bg-secondary-600 w-40"
                       >
                         <Users className="h-4 w-4 mr-1" /> View Applications ({listing.applications_count})

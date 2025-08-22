@@ -14,9 +14,12 @@ const Signup = () => {
     email: '',
     password: '',
     confirmPassword: '',
-    university: '',
-    degree: 'Bachelors',
+    institution: '',
+    degree: '',
+    major: '',
+    phoneNum: '',
     company: '',
+    recruiterPhone: '',
     terms: false,
   });
 
@@ -35,6 +38,10 @@ const Signup = () => {
       email: formData.email,
       password: formData.password,
       user_type: userType === 'company' ? 'recruiter' : 'student',
+      institution: userType === 'student' ? formData.institution : undefined,
+      degree: userType === 'student' ? formData.degree : undefined,
+      major: userType === 'student' ? formData.major : undefined,
+      phone_num: userType === 'student' ? formData.phoneNum : formData.recruiterPhone,
     } as const;
     const res = await signup(payload);
     if (res.success) navigate('/login');
@@ -164,19 +171,19 @@ const Signup = () => {
               {userType === 'student' ? (
                 <>
                 <div>
-                  <label htmlFor="university" className="block text-sm font-medium text-gray-700 mb-1">
-                    University
+                  <label htmlFor="institution" className="block text-sm font-medium text-gray-700 mb-1">
+                    Institution
                   </label>
                   <div className="relative">
                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
                       <GraduationCap className="h-4 w-4 text-gray-400" />
                     </div>
                     <input
-                      id="university"
-                      name="university"
+                      id="institution"
+                      name="institution"
                       type="text"
                       required
-                      value={formData.university}
+                      value={formData.institution}
                       onChange={handleChange}
                       className="block w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
                       placeholder="Stanford University"
@@ -195,33 +202,90 @@ const Signup = () => {
                       onChange={handleChange}
                       className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
                     >
-                      <option value="Bachelors">Bachelors</option>
-                      <option value="Masters">Masters</option>
-                      <option value="Diploma">Diploma</option>
+                      <option value="">Select degree</option>
+                      <option value="BSc">BSc</option>
+                      <option value="BBA">BBA</option>
+                      <option value="BA">BA</option>
+                      <option value="MSc">MSc</option>
+                      <option value="MBA">MBA</option>
+                      <option value="PhD">PhD</option>
+                      <option value="Other">Other</option>
                     </select>
+                  </div>
+                  <div>
+                    <label htmlFor="major" className="block text-sm font-medium text-gray-700 mb-1">
+                      Major
+                    </label>
+                    <input
+                      id="major"
+                      name="major"
+                      type="text"
+                      required
+                      value={formData.major}
+                      onChange={handleChange}
+                      className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                      placeholder="e.g., Computer Science, Business Administration"
+                    />
+                  </div>
+                  <div>
+                    <label htmlFor="phoneNum" className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number
+                    </label>
+                    <input
+                      id="phoneNum"
+                      name="phoneNum"
+                      type="tel"
+                      required
+                      value={formData.phoneNum}
+                      onChange={handleChange}
+                      className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                      placeholder="+1 (555) 123-4567"
+                    />
                   </div>
                 </>
               ) : (
-                <div>
-                  <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
-                    Company
-                  </label>
-                  <div className="relative">
-                    <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                      <Building className="h-4 w-4 text-gray-400" />
+                <>
+                  <div>
+                    <label htmlFor="company" className="block text-sm font-medium text-gray-700 mb-1">
+                      Company
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Building className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input
+                        id="company"
+                        name="company"
+                        type="text"
+                        required
+                        value={formData.company}
+                        onChange={handleChange}
+                        className="block w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                        placeholder="Acme Inc."
+                      />
                     </div>
-                    <input
-                      id="company"
-                      name="company"
-                      type="text"
-                      required
-                      value={formData.company}
-                      onChange={handleChange}
-                      className="block w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
-                      placeholder="Acme Inc."
-                    />
                   </div>
-                </div>
+                  <div>
+                    <label htmlFor="recruiterPhone" className="block text-sm font-medium text-gray-700 mb-1">
+                      Phone Number
+                    </label>
+                    <div className="relative">
+                      <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                        <Building className="h-4 w-4 text-gray-400" />
+                      </div>
+                      <input
+                        id="recruiterPhone"
+                        name="recruiterPhone"
+                        type="tel"
+                        required
+                        value={formData.recruiterPhone || ''}
+                        onChange={handleChange}
+                        className="block w-full pl-9 pr-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
+                        placeholder="+1 (555) 123-4567"
+                      />
+                    </div>
+                  </div>
+                </>
               )}
 
               {/* Password Fields */}

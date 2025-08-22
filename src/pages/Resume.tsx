@@ -5,6 +5,19 @@ import { UploadCloud, Github, User, GraduationCap, Briefcase, Languages } from '
 import { getUserReposSummary, extractUsernameFromUrl } from '../utils/github';
 import { setupPdfWorker, parseEuropassPdf, type InternMixCV } from '../utils/europass.util';
 
+// Normalize simple HTML (p/br) to plain text and strip other tags
+function stripAndNormalizeHtml(html: string): string {
+  if (!html) return '';
+  return html
+    .replace(/\r\n|\r/g, '\n')
+    .replace(/<\s*br\s*\/?\s*>/gi, '\n')
+    .replace(/<\s*\/p\s*>\s*<\s*p\s*>/gi, '\n')
+    .replace(/<\/?p\s*>/gi, '')
+    .replace(/<[^>]+>/g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .trim();
+}
+
 const Resume = () => {
   const { isAuthenticated } = useAuth();
   const [resumeFile, setResumeFile] = useState<File | null>(null);
@@ -243,7 +256,7 @@ const Resume = () => {
                     </div>
                   </div>
                   {exp.description && (
-                    <p className="text-purple-800 mt-2 text-sm">{exp.description}</p>
+                    <p className="text-purple-800 mt-2 text-sm whitespace-pre-line">{stripAndNormalizeHtml(exp.description)}</p>
                   )}
                 </div>
               ))}

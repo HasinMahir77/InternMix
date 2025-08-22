@@ -28,6 +28,7 @@ const Profile = () => {
           phone_num: data.phone_num || '',
           address: data.address || '',
           institution: data.institution || '',
+          degree: data.degree || '',
           major: data.major || '',
           cgpa: data.cgpa || 0,
           github_url: data.github_url || '',
@@ -115,6 +116,7 @@ const Profile = () => {
       phone_num: profile.phone_num || '',
       address: profile.address || '',
       institution: profile.institution || '',
+      degree: profile.degree || '',
       major: profile.major || '',
       cgpa: profile.cgpa || 0,
       github_url: profile.github_url || '',
@@ -279,6 +281,28 @@ const Profile = () => {
                     />
                   ) : (
                     <p className="mt-1 text-lg text-gray-800">{profile.institution || 'Not provided'}</p>
+                  )}
+                </div>
+                <div>
+                  <label className="block text-sm font-medium text-gray-500">Degree</label>
+                  {isEditing ? (
+                    <select 
+                      name="degree" 
+                      value={editData.degree || ''} 
+                      onChange={handleChange} 
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" 
+                    >
+                      <option value="">Select degree</option>
+                      <option value="BSc">BSc</option>
+                      <option value="BBA">BBA</option>
+                      <option value="BA">BA</option>
+                      <option value="MSc">MSc</option>
+                      <option value="MBA">MBA</option>
+                      <option value="PhD">PhD</option>
+                      <option value="Other">Other</option>
+                    </select>
+                  ) : (
+                    <p className="mt-1 text-lg text-gray-800">{profile.degree || 'Not provided'}</p>
                   )}
                 </div>
                 <div>

@@ -17,6 +17,7 @@ class Intern(Base):
     phone_num = Column(String, nullable=True)
     address = Column(String, nullable=True)
     institution = Column(String, nullable=True)
+    degree = Column(String, nullable=True)
     major = Column(String, nullable=True)
     cgpa = Column(Float, nullable=True)
     password_hash = Column(String, nullable=False)

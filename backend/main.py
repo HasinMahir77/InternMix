@@ -68,6 +68,10 @@ class SignupRequest(BaseModel):
     email: str
     password: str
     user_type: str  # 'student' | 'recruiter'
+    institution: Optional[str] = None  # For students
+    degree: Optional[str] = None  # For students
+    major: Optional[str] = None  # For students
+    phone_num: Optional[str] = None  # For both students and recruiters
 
 
 class LoginRequest(BaseModel):
@@ -188,6 +192,10 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
             password_hash=hash_password(payload.password),
             first_name=payload.first_name.strip(),
             last_name=payload.last_name.strip(),
+            institution=payload.institution.strip() if payload.institution else None,
+            degree=payload.degree.strip() if payload.degree else None,
+            major=payload.major.strip() if payload.major else None,
+            phone_num=payload.phone_num.strip() if payload.phone_num else None,
         )
     else:
         user = Recruiter(
@@ -195,6 +203,7 @@ def signup(payload: SignupRequest, db: Session = Depends(get_db)):
             password_hash=hash_password(payload.password),
             first_name=payload.first_name.strip(),
             last_name=payload.last_name.strip(),
+            phone=payload.phone_num.strip() if payload.phone_num else None,
         )
     db.add(user)
     try:
@@ -687,6 +696,7 @@ def get_student_profile(
         "phone_num": student.phone_num,
         "address": student.address,
         "institution": student.institution,
+        "degree": student.degree,
         "major": student.major,
         "cgpa": student.cgpa,
         "resume_path": student.resume_path,
@@ -714,7 +724,7 @@ def update_student_profile(
         raise HTTPException(status_code=404, detail="Student profile not found")
     
     # Update allowed fields
-    allowed_fields = ['first_name', 'last_name', 'phone_num', 'address', 'institution', 'major', 'cgpa', 'github_url']
+    allowed_fields = ['first_name', 'last_name', 'phone_num', 'address', 'institution', 'degree', 'major', 'cgpa', 'github_url']
     
     for field, value in profile_data.items():
         if field in allowed_fields and hasattr(student, field):
@@ -932,7 +942,7 @@ def get_enhanced_student_dashboard(
     profile_completion = 0
     if student:
         # Calculate profile completion percentage
-        fields = ['phone_num', 'address', 'institution', 'major', 'cgpa', 'resume_path']
+        fields = ['phone_num', 'address', 'institution', 'degree', 'major', 'cgpa', 'resume_path']
         completed_fields = sum(1 for field in fields if getattr(student, field))
         profile_completion = int((completed_fields / len(fields)) * 100)
     

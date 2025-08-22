@@ -8,6 +8,7 @@ export interface StudentProfile {
   phone_num: string | null;
   address: string | null;
   institution: string | null;
+  degree: string | null;
   major: string | null;
   cgpa: number | null;
   resume_path: string | null;
@@ -22,6 +23,7 @@ export interface StudentProfileUpdate {
   phone_num?: string;
   address?: string;
   institution?: string;
+  degree?: string;
   major?: string;
   cgpa?: number;
   github_url?: string;
