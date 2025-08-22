@@ -320,13 +320,22 @@ const Profile = () => {
                 <div>
                   <label className="block text-sm font-medium text-gray-500">Major</label>
                   {isEditing ? (
-                    <input 
-                      type="text" 
+                    <select 
                       name="major" 
                       value={editData.major || ''} 
                       onChange={handleChange} 
-                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500" 
-                    />
+                      className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-primary-500 focus:border-primary-500"
+                    >
+                      <option value="">Select major</option>
+                      <option value="Management">Management</option>
+                      <option value="MIS">MIS</option>
+                      <option value="Computer Science">Computer Science</option>
+                      <option value="Data Science">Data Science</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="Finance">Finance</option>
+                      <option value="Design">Design</option>
+                      <option value="Other">Other</option>
+                    </select>
                   ) : (
                     <p className="mt-1 text-lg text-gray-800">{profile.major || 'Not provided'}</p>
                   )}

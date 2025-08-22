@@ -5,7 +5,7 @@ export interface ListingCreateRequest {
   title: string;
   description: string;
   degree: string;
-  subject: string;
+  major: string;
   recommended_cgpa?: number;
   duration_months: number;
   location: string;
@@ -19,7 +19,7 @@ export interface ListingUpdateRequest {
   title?: string;
   description?: string;
   degree?: string;
-  subject?: string;
+  major?: string;
   recommended_cgpa?: number;
   duration_months?: number;
   location?: string;
@@ -35,7 +35,7 @@ export interface ListingResponse {
   title: string;
   description: string;
   degree: string;
-  subject: string;
+  major: string;
   recommended_cgpa?: number;
   duration_months: number;
   location: string;

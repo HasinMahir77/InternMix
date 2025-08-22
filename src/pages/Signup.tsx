@@ -221,16 +221,24 @@ const Signup = () => {
                     <label htmlFor="major" className="block text-sm font-medium text-gray-700 mb-1">
                       Major
                     </label>
-                    <input
+                    <select
                       id="major"
                       name="major"
-                      type="text"
                       required
                       value={formData.major}
                       onChange={handleChange}
                       className="block w-full px-3 py-2.5 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 transition-colors text-sm"
-                      placeholder="e.g., Computer Science, Business Administration"
-                    />
+                    >
+                      <option value="">Select major</option>
+                      <option value="Management">Management</option>
+                      <option value="MIS">MIS</option>
+                      <option value="Computer Science">Computer Science</option>
+                      <option value="Data Science">Data Science</option>
+                      <option value="Marketing">Marketing</option>
+                      <option value="Finance">Finance</option>
+                      <option value="Design">Design</option>
+                      <option value="Other">Other</option>
+                    </select>
                   </div>
                   <div>
                     <label htmlFor="cgpa" className="block text-sm font-medium text-gray-700 mb-1">

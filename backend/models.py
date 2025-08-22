@@ -66,7 +66,7 @@ class Listing(Base):
     title = Column(String, nullable=False)
     description = Column(String, nullable=False)
     degree = Column(String, nullable=False)
-    subject = Column(String, nullable=False)
+    major = Column(String, nullable=False)
     recommended_cgpa = Column(Float, nullable=True)
     duration_months = Column(Integer, nullable=False)
     location = Column(String, nullable=False)

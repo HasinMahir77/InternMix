@@ -25,7 +25,7 @@ const Listings: React.FC = () => {
     title: '',
     description: '',
     degree: '',
-    subject: '',
+    major: '',
     recommendedCgpa: '',
     durationMonths: '',
     location: '',
@@ -80,7 +80,7 @@ const Listings: React.FC = () => {
       title: '',
       description: '',
       degree: '',
-      subject: '',
+      major: '',
       recommendedCgpa: '',
       durationMonths: '',
       location: '',
@@ -101,7 +101,7 @@ const Listings: React.FC = () => {
         title: formData.title.trim(),
         description: formData.description.trim(),
         degree: formData.degree,
-        subject: formData.subject,
+        major: formData.major,
         recommended_cgpa: formData.recommendedCgpa ? parseFloat(formData.recommendedCgpa) : undefined,
         duration_months: formData.durationMonths ? parseInt(formData.durationMonths, 10) : 0,
         location: formData.location.trim(),
@@ -140,7 +140,7 @@ const Listings: React.FC = () => {
       title: listing.title,
       description: listing.description,
       degree: listing.degree,
-      subject: listing.subject,
+      major: listing.major,
       recommendedCgpa: listing.recommended_cgpa?.toString() || '',
       durationMonths: listing.duration_months.toString(),
       location: listing.location,
@@ -226,14 +226,14 @@ const Listings: React.FC = () => {
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Subject</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Major</label>
               <select
-                name="subject"
-                value={formData.subject}
+                name="major"
+                value={formData.major}
                 onChange={handleChange}
                 className="block w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-primary-500 focus:border-primary-500 text-sm"
               >
-                <option value="">Select subject</option>
+                <option value="">Select major</option>
                 <option value="Management">Management</option>
                 <option value="MIS">MIS</option>
                 <option value="Computer Science">Computer Science</option>
@@ -382,7 +382,7 @@ const Listings: React.FC = () => {
                           ))}
                         </div>
                       )}
-                      <p className="text-sm text-gray-500">Degree: {listing.degree} • Subject: {listing.subject}</p>
+                      <p className="text-sm text-gray-500">Degree: {listing.degree} • Major: {listing.major}</p>
                       {typeof listing.recommended_cgpa !== 'undefined' && (
                         <p className="text-sm text-gray-500">Recommended CGPA: {listing.recommended_cgpa}+</p>
                       )}

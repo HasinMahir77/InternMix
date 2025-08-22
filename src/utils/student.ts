@@ -43,7 +43,7 @@ export interface StudentApplication {
   similarity_score: number | null;
   applied_at: string | null;
   degree_required: string;
-  subject_required: string;
+  major_required: string;
   duration_months: number;
   deadline: string;
 }
@@ -60,7 +60,7 @@ export interface ApplicationDetails {
     title: string;
     description: string;
     degree: string;
-    subject: string;
+    major: string;
     recommended_cgpa: number | null;
     duration_months: number;
     location: string;

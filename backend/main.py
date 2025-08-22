@@ -105,7 +105,7 @@ class ListingCreateRequest(BaseModel):
     title: str
     description: str
     degree: str
-    subject: str
+    major: str
     recommended_cgpa: Optional[float] = None
     duration_months: int
     location: str
@@ -119,7 +119,7 @@ class ListingUpdateRequest(BaseModel):
     title: Optional[str] = None
     description: Optional[str] = None
     degree: Optional[str] = None
-    subject: Optional[str] = None
+    major: Optional[str] = None
     recommended_cgpa: Optional[float] = None
     duration_months: Optional[int] = None
     location: Optional[str] = None
@@ -135,7 +135,7 @@ class ListingResponse(BaseModel):
     title: str
     description: str
     degree: str
-    subject: str
+    major: str
     recommended_cgpa: Optional[float]
     duration_months: int
     location: str
@@ -218,6 +218,26 @@ def ensure_recruiter_columns():
 
 
 ensure_recruiter_columns()
+
+
+# Migration for listings table: ensure 'major' exists and backfill from 'subject' if needed
+def ensure_listings_columns():
+    if not DATABASE_URL.startswith("sqlite"):
+        return
+    with engine.connect() as conn:
+        res = conn.exec_driver_sql("PRAGMA table_info(listings)")
+        cols = {row[1] for row in res.fetchall()}
+        migrations = []
+        if "major" not in cols:
+            migrations.append("ALTER TABLE listings ADD COLUMN major TEXT")
+            # Backfill new column from legacy 'subject' if it exists
+            if "subject" in cols:
+                migrations.append("UPDATE listings SET major = subject WHERE major IS NULL")
+        for stmt in migrations:
+            conn.exec_driver_sql(stmt)
+
+
+ensure_listings_columns()
 
 
 # Development middleware
@@ -381,7 +401,7 @@ def create_listing(
         title=listing_data.title,
         description=listing_data.description,
         degree=listing_data.degree,
-        subject=listing_data.subject,
+        major=listing_data.major,
         recommended_cgpa=listing_data.recommended_cgpa,
         duration_months=listing_data.duration_months,
         location=listing_data.location,
@@ -401,7 +421,7 @@ def create_listing(
         title=listing.title,
         description=listing.description,
         degree=listing.degree,
-        subject=listing.subject,
+        major=listing.major,
         recommended_cgpa=listing.recommended_cgpa,
         duration_months=listing.duration_months,
         location=listing.location,
@@ -440,7 +460,7 @@ def get_listings(
             title=listing.title,
             description=listing.description,
             degree=listing.degree,
-            subject=listing.subject,
+            major=listing.major,
             recommended_cgpa=listing.recommended_cgpa,
             duration_months=listing.duration_months,
             location=listing.location,
@@ -480,7 +500,7 @@ def get_listing(
         title=listing.title,
         description=listing.description,
         degree=listing.degree,
-        subject=listing.subject,
+        major=listing.major,
         recommended_cgpa=listing.recommended_cgpa,
         duration_months=listing.duration_months,
         location=listing.location,
@@ -537,7 +557,7 @@ def update_listing(
         title=listing.title,
         description=listing.description,
         degree=listing.degree,
-        subject=listing.subject,
+        major=listing.major,
         recommended_cgpa=listing.recommended_cgpa,
         duration_months=listing.duration_months,
         location=listing.location,
@@ -1012,7 +1032,7 @@ def get_student_applications(
             "similarity_score": app.similarity_score,
             "applied_at": app.applied_at.isoformat() if app.applied_at else None,
             "degree_required": listing.degree,
-            "subject_required": listing.subject,
+            "major_required": listing.major,
             "duration_months": listing.duration_months,
             "deadline": listing.deadline
         })
@@ -1111,7 +1131,7 @@ def get_application_details(
             "title": listing.title,
             "description": listing.description,
             "degree": listing.degree,
-            "subject": listing.subject,
+            "major": listing.major,
             "recommended_cgpa": listing.recommended_cgpa,
             "duration_months": listing.duration_months,
             "location": listing.location,
