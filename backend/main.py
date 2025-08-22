@@ -7,7 +7,7 @@ from pathlib import Path
 from fastapi import FastAPI, Depends, HTTPException, status, Header
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
-from sqlalchemy import create_engine, select
+from sqlalchemy import create_engine, select, func
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.orm import sessionmaker, Session
 from passlib.context import CryptContext
@@ -73,6 +73,7 @@ class SignupRequest(BaseModel):
 class LoginRequest(BaseModel):
     email: str
     password: str
+    remember_me: bool = False
 
 
 class TokenResponse(BaseModel):
@@ -226,7 +227,17 @@ def login(payload: LoginRequest, db: Session = Depends(get_db)):
         user_type = "recruiter" if recruiter is not None else None
     if user_obj is None or not verify_password(payload.password, user_obj.password_hash):
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid credentials")
-    token = create_access_token(subject=f"{user_type}:{user_obj.email}")
+    
+    # Set token expiration based on remember_me
+    if payload.remember_me:
+        # 30 days for remember me
+        expires_delta = timedelta(days=30)
+    else:
+        # Default expiration (7 days)
+        expires_delta = None
+    
+    token = create_access_token(subject=f"{user_type}:{user_obj.email}", expires_delta=expires_delta)
+    
     return TokenResponse(
         access_token=token,
         user={
@@ -277,6 +288,12 @@ def me(dep=Depends(get_current_user)):
         last_name=user_obj.last_name,
         user_type=user_type,
     )
+
+
+@app.post("/api/auth/logout")
+def logout():
+    """Logout endpoint - client should clear their token"""
+    return {"message": "Logged out successfully"}
 
 
 # Listing endpoints
@@ -644,6 +661,297 @@ def get_dashboard_stats(
             "accepted_applications": accepted_applications,
             "user_type": "student"
         }
+
+
+# Student Profile and Application endpoints
+@app.get("/api/student/profile")
+def get_student_profile(
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get student profile information"""
+    user_obj, user_type = dep
+    
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can access this endpoint")
+    
+    # Get student data from database
+    student = db.get(Intern, user_obj.email)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+    
+    return {
+        "email": student.email,
+        "first_name": student.first_name,
+        "last_name": student.last_name,
+        "phone_num": student.phone_num,
+        "address": student.address,
+        "institution": student.institution,
+        "major": student.major,
+        "cgpa": student.cgpa,
+        "resume_path": student.resume_path,
+        "github_url": student.github_url,
+        "profile_image_url": student.profile_image_url,
+        "created_at": student.created_at.isoformat() if student.created_at else None
+    }
+
+
+@app.put("/api/student/profile")
+def update_student_profile(
+    profile_data: dict,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Update student profile information"""
+    user_obj, user_type = dep
+    
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can update their profile")
+    
+    # Get student data from database
+    student = db.get(Intern, user_obj.email)
+    if not student:
+        raise HTTPException(status_code=404, detail="Student profile not found")
+    
+    # Update allowed fields
+    allowed_fields = ['first_name', 'last_name', 'phone_num', 'address', 'institution', 'major', 'cgpa', 'github_url']
+    
+    for field, value in profile_data.items():
+        if field in allowed_fields and hasattr(student, field):
+            setattr(student, field, value)
+    
+    # Handle password update separately if provided
+    if 'password' in profile_data and profile_data['password']:
+        student.password_hash = hash_password(profile_data['password'])
+    
+    try:
+        db.commit()
+        db.refresh(student)
+        return {"message": "Profile updated successfully"}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to update profile")
+
+
+@app.get("/api/student/applications")
+def get_student_applications(
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get all applications for a student"""
+    user_obj, user_type = dep
+    
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can access applications")
+    
+    # Get applications with listing details
+    applications = db.query(Application, Listing).join(Listing).filter(
+        Application.intern_email == user_obj.email
+    ).all()
+    
+    result = []
+    for app, listing in applications:
+        # Get recruiter info
+        recruiter = db.get(Recruiter, listing.recruiter_email)
+        company_name = recruiter.organization_name if recruiter else "Unknown Company"
+        
+        result.append({
+            "id": app.id,
+            "listing_id": listing.id,
+            "title": listing.title,
+            "company": company_name,
+            "location": listing.location,
+            "is_remote": listing.is_remote,
+            "status": app.status,
+            "similarity_score": app.similarity_score,
+            "applied_at": app.applied_at.isoformat() if app.applied_at else None,
+            "degree_required": listing.degree,
+            "subject_required": listing.subject,
+            "duration_months": listing.duration_months,
+            "deadline": listing.deadline
+        })
+    
+    return result
+
+
+@app.post("/api/student/applications")
+def apply_for_internship(
+    request: dict,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    listing_id = request.get("listing_id")
+    if not listing_id:
+        raise HTTPException(status_code=400, detail="listing_id is required")
+    """Apply for an internship"""
+    user_obj, user_type = dep
+    
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can apply for internships")
+    
+    # Check if listing exists and is active
+    listing = db.get(Listing, listing_id)
+    if not listing:
+        raise HTTPException(status_code=404, detail="Internship listing not found")
+    
+    if listing.archived:
+        raise HTTPException(status_code=400, detail="This internship is no longer accepting applications")
+    
+    # Check if already applied
+    existing_application = db.query(Application).filter(
+        Application.listing_id == listing_id,
+        Application.intern_email == user_obj.email
+    ).first()
+    
+    if existing_application:
+        raise HTTPException(status_code=400, detail="You have already applied for this internship")
+    
+    # Create new application
+    application = Application(
+        listing_id=listing_id,
+        intern_email=user_obj.email,
+        status="pending",
+        similarity_score=0.0  # This would be calculated by ML model later
+    )
+    
+    try:
+        db.add(application)
+        db.commit()
+        db.refresh(application)
+        return {"message": "Application submitted successfully", "application_id": application.id}
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail="Failed to submit application")
+
+
+@app.get("/api/student/applications/{application_id}")
+def get_application_details(
+    application_id: int,
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get detailed information about a specific application"""
+    user_obj, user_type = dep
+    
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can access application details")
+    
+    # Get application with listing details
+    application = db.query(Application).filter(
+        Application.id == application_id,
+        Application.intern_email == user_obj.email
+    ).first()
+    
+    if not application:
+        raise HTTPException(status_code=404, detail="Application not found")
+    
+    # Get listing details
+    listing = db.get(Listing, application.listing_id)
+    if not listing:
+        raise HTTPException(status_code=404, detail="Internship listing not found")
+    
+    # Get recruiter info
+    recruiter = db.get(Recruiter, listing.recruiter_email)
+    
+    return {
+        "application": {
+            "id": application.id,
+            "status": application.status,
+            "similarity_score": application.similarity_score,
+            "applied_at": application.applied_at.isoformat() if application.applied_at else None
+        },
+        "listing": {
+            "id": listing.id,
+            "title": listing.title,
+            "description": listing.description,
+            "degree": listing.degree,
+            "subject": listing.subject,
+            "recommended_cgpa": listing.recommended_cgpa,
+            "duration_months": listing.duration_months,
+            "location": listing.location,
+            "is_remote": listing.is_remote,
+            "required_skills": listing.required_skills,
+            "optional_skills": listing.optional_skills,
+            "deadline": listing.deadline,
+            "created_at": listing.created_at.isoformat() if listing.created_at else None
+        },
+        "company": {
+            "name": recruiter.organization_name if recruiter else "Unknown Company",
+            "email": listing.recruiter_email
+        }
+    }
+
+
+@app.get("/api/student/dashboard/enhanced")
+def get_enhanced_student_dashboard(
+    dep=Depends(get_current_user),
+    db: Session = Depends(get_db)
+):
+    """Get enhanced student dashboard with detailed statistics"""
+    user_obj, user_type = dep
+    
+    if user_type != "student":
+        raise HTTPException(status_code=403, detail="Only students can access this endpoint")
+    
+    # Get basic application counts
+    total_applications = db.query(Application).filter(
+        Application.intern_email == user_obj.email
+    ).count()
+    
+    active_applications = db.query(Application).filter(
+        Application.intern_email == user_obj.email,
+        Application.status != "rejected"
+    ).count()
+    
+    accepted_applications = db.query(Application).filter(
+        Application.intern_email == user_obj.email,
+        Application.status == "accepted"
+    ).count()
+    
+    pending_applications = db.query(Application).filter(
+        Application.intern_email == user_obj.email,
+        Application.status == "pending"
+    ).count()
+    
+    # Get recent applications (last 30 days)
+    month_ago = datetime.utcnow() - timedelta(days=30)
+    recent_applications = db.query(Application).filter(
+        Application.intern_email == user_obj.email,
+        Application.applied_at >= month_ago
+    ).count()
+    
+    # Get application status breakdown
+    status_breakdown = db.query(Application.status, func.count(Application.id)).filter(
+        Application.intern_email == user_obj.email
+    ).group_by(Application.status).all()
+    
+    status_stats = {status: count for status, count in status_breakdown}
+    
+    # Get student profile info
+    student = db.get(Intern, user_obj.email)
+    profile_completion = 0
+    if student:
+        # Calculate profile completion percentage
+        fields = ['phone_num', 'address', 'institution', 'major', 'cgpa', 'resume_path']
+        completed_fields = sum(1 for field in fields if getattr(student, field))
+        profile_completion = int((completed_fields / len(fields)) * 100)
+    
+    return {
+        "total_applications": total_applications,
+        "active_applications": active_applications,
+        "accepted_applications": accepted_applications,
+        "pending_applications": pending_applications,
+        "recent_applications": recent_applications,
+        "status_breakdown": status_stats,
+        "profile_completion": profile_completion,
+        "upcoming_interviews": 0,  # Placeholder for future interview system
+        "profile_views": 0,  # Placeholder for analytics
+        "recommendations": {
+            "complete_profile": profile_completion < 100,
+            "apply_more": total_applications < 5,
+            "update_resume": not student.resume_path if student else True
+        }
+    }
 
 
 if __name__ == "__main__":

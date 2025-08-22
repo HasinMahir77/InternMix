@@ -17,7 +17,7 @@ const Login = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
-    const result = await login(formData.email, formData.password);
+    const result = await login(formData.email, formData.password, formData.remember);
     if (result.success && result.user) {
       const destination = result.user.user_type === 'recruiter' ? '/listings' : '/dashboard';
       navigate(destination, { replace: true });

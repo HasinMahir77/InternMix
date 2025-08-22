@@ -6,7 +6,7 @@ interface AuthContextType {
   currentUser: AuthUser | null;
   userType: 'student' | 'recruiter';
   appliedInternships: Set<string>;
-  login: (email: string, password: string) => Promise<{ success: boolean; user?: AuthUser }>;
+  login: (email: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; user?: AuthUser }>;
   logout: () => void;
   applyForInternship: (internshipTitle: string) => void;
   isApplied: (internshipTitle: string) => boolean;
@@ -54,8 +54,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     init();
   }, []);
 
-  const login = async (email: string, password: string): Promise<{ success: boolean; user?: AuthUser }> => {
-    const result = await authLogin(email, password);
+  const login = async (email: string, password: string, rememberMe: boolean = false): Promise<{ success: boolean; user?: AuthUser }> => {
+    const result = await authLogin(email, password, rememberMe);
     if (result.success) {
       setIsAuthenticated(true);
       if (result.user) {
@@ -66,8 +66,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     return result;
   };
 
-  const logout = () => {
-    authLogout();
+  const logout = async () => {
+    await authLogout();
     setIsAuthenticated(false);
     setCurrentUser(null);
     setUserType('student');

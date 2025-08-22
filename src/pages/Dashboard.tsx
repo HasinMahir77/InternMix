@@ -1,13 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, Link } from 'react-router-dom';
-import { Users, Briefcase, Calendar, TrendingUp, Loader2, RefreshCw } from 'lucide-react';
+import { Users, Briefcase, Calendar, TrendingUp, Loader2, RefreshCw, CheckCircle, Clock, AlertCircle } from 'lucide-react';
 import { 
   getRecruiterDashboard, 
   getStudentDashboard, 
   type RecruiterDashboardData, 
   type StudentDashboardData 
 } from '../utils/dashboard';
+import { 
+  getEnhancedStudentDashboard,
+  type EnhancedStudentDashboard 
+} from '../utils/student';
 
 const Dashboard = () => {
   const { isAuthenticated, currentUser, userType } = useAuth();
@@ -15,6 +19,7 @@ const Dashboard = () => {
   const [error, setError] = useState<string | null>(null);
   const [recruiterData, setRecruiterData] = useState<RecruiterDashboardData | null>(null);
   const [studentData, setStudentData] = useState<StudentDashboardData | null>(null);
+  const [enhancedStudentData, setEnhancedStudentData] = useState<EnhancedStudentDashboard | null>(null);
 
   const fetchDashboardData = async () => {
     if (!isAuthenticated) return;
@@ -27,8 +32,22 @@ const Dashboard = () => {
         const data = await getRecruiterDashboard();
         setRecruiterData(data);
       } else {
-        const data = await getStudentDashboard();
-        setStudentData(data);
+        // Get enhanced student dashboard data (includes basic data)
+        try {
+          const enhancedData = await getEnhancedStudentDashboard();
+          setEnhancedStudentData(enhancedData);
+          // Set basic data from enhanced data for backward compatibility
+          setStudentData({
+            total_applications: enhancedData.total_applications,
+            active_applications: enhancedData.active_applications,
+            upcoming_interviews: enhancedData.upcoming_interviews,
+            profile_views: enhancedData.profile_views
+          });
+        } catch (err) {
+          // Fallback to basic dashboard if enhanced fails
+          const basicData = await getStudentDashboard();
+          setStudentData(basicData);
+        }
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to fetch dashboard data');
@@ -103,7 +122,10 @@ const Dashboard = () => {
                   </div>
                   <p className="text-gray-600 mb-4">Track your internship applications</p>
                   <div className="text-2xl font-bold text-blue-600">
-                    {studentData?.active_applications || 0} Active
+                    {enhancedStudentData?.active_applications || studentData?.active_applications || 0} Active
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    {enhancedStudentData?.total_applications || 0} Total
                   </div>
                 </div>
 
@@ -129,7 +151,23 @@ const Dashboard = () => {
                   </div>
                   <p className="text-gray-600 mb-4">Companies viewing your profile</p>
                   <div className="text-2xl font-bold text-purple-600">
-                    {studentData?.profile_views || 0} This Week
+                    {enhancedStudentData?.profile_views || studentData?.profile_views || 0} This Week
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <div className="bg-orange-100 p-2 rounded-lg">
+                      <CheckCircle className="h-6 w-6 text-orange-600" />
+                    </div>
+                    <h3 className="text-lg font-semibold text-gray-900">Profile Completion</h3>
+                  </div>
+                  <p className="text-gray-600 mb-4">Complete your profile for better chances</p>
+                  <div className="text-2xl font-bold text-orange-600">
+                    {enhancedStudentData?.profile_completion || 0}%
+                  </div>
+                  <div className="text-sm text-gray-500 mt-1">
+                    {enhancedStudentData?.recommendations?.complete_profile ? 'Complete your profile' : 'Profile complete!'}
                   </div>
                 </div>
               </>
@@ -202,15 +240,36 @@ const Dashboard = () => {
                   <div>
                     <h3 className="text-lg font-medium text-gray-900 mb-2">Application Overview</h3>
                     <p className="text-gray-600">
-                      You have applied to <span className="font-semibold">{studentData?.total_applications || 0}</span> internships 
-                      with <span className="font-semibold">{studentData?.active_applications || 0}</span> active applications.
+                      You have applied to <span className="font-semibold">{enhancedStudentData?.total_applications || studentData?.total_applications || 0}</span> internships 
+                      with <span className="font-semibold">{enhancedStudentData?.active_applications || studentData?.active_applications || 0}</span> active applications.
                     </p>
+                    {enhancedStudentData && (
+                      <div className="mt-2 text-sm text-gray-500">
+                        <span className="font-medium">Status:</span> {enhancedStudentData.pending_applications} Pending, {enhancedStudentData.accepted_applications} Accepted
+                      </div>
+                    )}
                   </div>
                   <div>
-                    <h3 className="text-lg font-medium text-gray-900 mb-2">Profile Activity</h3>
+                    <h3 className="text-lg font-medium text-gray-900 mb-2">Profile & Recommendations</h3>
                     <p className="text-gray-600">
-                      Your profile has been viewed <span className="font-semibold">{studentData?.profile_views || 0}</span> times this week.
+                      Profile completion: <span className="font-semibold">{enhancedStudentData?.profile_completion || 0}%</span>
                     </p>
+                    {enhancedStudentData?.recommendations && (
+                      <div className="mt-2 text-sm text-gray-500">
+                        {enhancedStudentData.recommendations.complete_profile && (
+                          <div className="flex items-center space-x-1 text-orange-600">
+                            <AlertCircle className="h-3 w-3" />
+                            <span>Complete your profile</span>
+                          </div>
+                        )}
+                        {enhancedStudentData.recommendations.apply_more && (
+                          <div className="flex items-center space-x-1 text-blue-600">
+                            <Clock className="h-3 w-3" />
+                            <span>Apply to more internships</span>
+                          </div>
+                        )}
+                      </div>
+                    )}
                   </div>
                 </div>
               ) : (

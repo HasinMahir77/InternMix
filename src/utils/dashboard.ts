@@ -1,4 +1,5 @@
 // Dashboard API service
+import { getToken } from './auth';
 
 export interface RecruiterDashboardData {
   active_postings: number;
@@ -27,7 +28,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
 // Helper function to get auth headers
 const getAuthHeaders = () => {
-  const token = localStorage.getItem('internmix_token');
+  const token = getToken();
   return {
     'Content-Type': 'application/json',
     'Authorization': `Bearer ${token}`,

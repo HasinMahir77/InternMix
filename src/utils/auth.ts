@@ -18,28 +18,37 @@ export const getUserType = (userTypeOrEmail: string | null): UserType => {
   return 'student';
 };
 
-export const setToken = (token: string) => {
-  localStorage.setItem(TOKEN_KEY, token);
+export const setToken = (token: string, rememberMe: boolean = false) => {
+  if (rememberMe) {
+    // Store in localStorage for persistent login (survives browser restarts)
+    localStorage.setItem(TOKEN_KEY, token);
+  } else {
+    // Store in sessionStorage for session-only login (cleared when browser closes)
+    sessionStorage.setItem(TOKEN_KEY, token);
+  }
 };
 
 export const getToken = (): string | null => {
-  return localStorage.getItem(TOKEN_KEY);
+  // Check sessionStorage first (session-only tokens), then localStorage (persistent tokens)
+  return sessionStorage.getItem(TOKEN_KEY) || localStorage.getItem(TOKEN_KEY);
 };
 
 export const deleteToken = () => {
+  // Clear from both storage locations
   localStorage.removeItem(TOKEN_KEY);
+  sessionStorage.removeItem(TOKEN_KEY);
 };
 
-export const login = async (email: string, password: string): Promise<{ success: boolean; user?: AuthUser }> => {
+export const login = async (email: string, password: string, rememberMe: boolean = false): Promise<{ success: boolean; user?: AuthUser }> => {
   try {
     const res = await fetch(`${API_BASE}/api/auth/login`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password }),
+      body: JSON.stringify({ email, password, remember_me: rememberMe }),
     });
     if (!res.ok) return { success: false };
     const data = await res.json();
-    setToken(data.access_token);
+    setToken(data.access_token, rememberMe);
     return { success: true, user: data.user as AuthUser };
   } catch {
     return { success: false };
@@ -70,8 +79,23 @@ export const signup = async (payload: {
   }
 };
 
-export const logout = () => {
-  deleteToken();
+export const logout = async (): Promise<void> => {
+  try {
+    const token = getToken();
+    if (token) {
+      // Call backend logout endpoint
+      await fetch(`${API_BASE}/api/auth/logout`, {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+      });
+    }
+  } catch (error) {
+    // Ignore errors during logout
+    console.warn('Logout request failed:', error);
+  } finally {
+    // Always clear local tokens
+    deleteToken();
+  }
 };
 
 export const isAuthenticated = (): boolean => {

@@ -88,7 +88,9 @@ const Header = () => {
                   </span>
                 </div>
                 <button
-                  onClick={logout}
+                  onClick={async () => {
+                    await logout();
+                  }}
                   className="flex items-center space-x-1 text-sm font-medium text-gray-700 hover:text-red-600 transition-colors"
                 >
                   <LogOut className="h-4 w-4" />
@@ -150,8 +152,8 @@ const Header = () => {
                       </span>
                     </div>
                     <button
-                      onClick={() => {
-                        logout();
+                      onClick={async () => {
+                        await logout();
                         setIsMenuOpen(false);
                       }}
                       className="flex items-center space-x-2 text-sm font-medium text-gray-700 px-3 py-2 rounded-lg hover:bg-red-50 transition-colors"
