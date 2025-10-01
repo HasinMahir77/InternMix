@@ -11,7 +11,7 @@ interface Message {
 }
 
 const Chat = () => {
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
   const [messages, setMessages] = useState<Message[]>([
     { sender: 'bot', text: "Welcome to InternMix! I'm your personal AI assistant." },
     { sender: 'bot', text: "I can help you polish your resume, find internships, and prepare for interviews. What's on your mind?" },
@@ -28,6 +28,10 @@ const Chat = () => {
       });
     }
   }, [messages]);
+
+  if (authLoading) {
+    return null; // or a loading spinner
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;

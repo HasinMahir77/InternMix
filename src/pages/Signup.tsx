@@ -7,7 +7,7 @@ import { useAuth } from '../context/AuthContext';
 const Signup = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { isAuthenticated, currentUser } = useAuth();
+  const { isAuthenticated, currentUser, isLoading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState(location.state?.userType || 'student');
   const [formData, setFormData] = useState({
@@ -26,6 +26,11 @@ const Signup = () => {
     recruiterPhone: '',
     terms: false,
   });
+
+  // Wait for auth to load
+  if (isLoading) {
+    return null; // or a loading spinner
+  }
 
   // Redirect if already logged in
   if (isAuthenticated && currentUser) {

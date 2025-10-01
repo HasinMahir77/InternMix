@@ -6,6 +6,7 @@ interface AuthContextType {
   currentUser: AuthUser | null;
   userType: 'student' | 'recruiter';
   appliedInternships: Set<string>;
+  isLoading: boolean;
   login: (email: string, password: string, rememberMe?: boolean) => Promise<{ success: boolean; user?: AuthUser }>;
   logout: () => void;
   applyForInternship: (internshipTitle: string) => void;
@@ -31,13 +32,16 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [currentUser, setCurrentUser] = useState<AuthUser | null>(null);
   const [appliedInternships, setAppliedInternships] = useState<Set<string>>(new Set());
   const [userType, setUserType] = useState<'student' | 'recruiter'>('student');
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const init = async () => {
+      setIsLoading(true);
       if (!tokenExists()) {
         setIsAuthenticated(false);
         setCurrentUser(null);
         setUserType('student');
+        setIsLoading(false);
         return;
       }
       const user = await getCurrentUser();
@@ -50,6 +54,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         setCurrentUser(null);
         setUserType('student');
       }
+      setIsLoading(false);
     };
     init();
   }, []);
@@ -87,6 +92,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     currentUser,
     userType,
     appliedInternships,
+    isLoading,
     login,
     logout,
     applyForInternship,

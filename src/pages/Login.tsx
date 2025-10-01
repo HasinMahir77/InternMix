@@ -11,8 +11,13 @@ const Login = () => {
     password: '',
     remember: false,
   });
-  const { login, isAuthenticated, currentUser } = useAuth();
+  const { login, isAuthenticated, currentUser, isLoading } = useAuth();
   const navigate = useNavigate();
+
+  // Wait for auth to load
+  if (isLoading) {
+    return null; // or a loading spinner
+  }
 
   // Redirect if already logged in
   if (isAuthenticated && currentUser) {
