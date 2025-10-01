@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate, Navigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, User, Users, GraduationCap, Building } from 'lucide-react';
 import { signup } from '../utils/auth';
+import { useAuth } from '../context/AuthContext';
 
 const Signup = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const { isAuthenticated, currentUser } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState(location.state?.userType || 'student');
   const [formData, setFormData] = useState({
@@ -24,6 +26,12 @@ const Signup = () => {
     recruiterPhone: '',
     terms: false,
   });
+
+  // Redirect if already logged in
+  if (isAuthenticated && currentUser) {
+    const destination = currentUser.user_type === 'recruiter' ? '/listings' : '/dashboard';
+    return <Navigate to={destination} replace />;
+  }
 
   useEffect(() => {
     if (location.state?.userType) {

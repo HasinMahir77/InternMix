@@ -1,7 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate } from 'react-router-dom';
-import { Send, Bot } from 'lucide-react';
+import { Send, Bot, Loader2 } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 interface Message {
   sender: 'user' | 'bot';
@@ -15,6 +17,7 @@ const Chat = () => {
     { sender: 'bot', text: "I can help you polish your resume, find internships, and prepare for interviews. What's on your mind?" },
   ]);
   const [input, setInput] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
   const chatContainerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -30,18 +33,42 @@ const Chat = () => {
     return <Navigate to="/login" replace />;
   }
 
-  const handleSend = (e: React.FormEvent) => {
+  const handleSend = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (input.trim() === '') return;
+    if (input.trim() === '' || isLoading) return;
 
     const userMessage: Message = { sender: 'user', text: input };
     setMessages(prev => [...prev, userMessage]);
+    const userInput = input;
     setInput('');
+    setIsLoading(true);
 
-    setTimeout(() => {
-      const botMessage: Message = { sender: 'bot', text: 'Chat coming soon' };
+    try {
+      const response = await fetch('http://192.168.0.137:8000/api/chat', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: userInput,
+          user_type: 'student',
+          max_tokens: 300,
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to get response from chat server');
+      }
+
+      const data = await response.json();
+      const botMessage: Message = { sender: 'bot', text: data.response || 'Sorry, I could not process your request.' };
       setMessages(prev => [...prev, botMessage]);
-    }, 1000);
+    } catch (error) {
+      const errorMessage: Message = { sender: 'bot', text: 'Sorry, I am having trouble connecting to the server. Please try again later.' };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -71,7 +98,27 @@ const Chat = () => {
                       : 'bg-gray-200 text-gray-800 rounded-bl-none'
                   }`}
                 >
-                  <p className="text-sm">{msg.text}</p>
+                  <div className={`text-sm prose prose-sm max-w-none ${
+                    msg.sender === 'user' ? 'prose-invert' : ''
+                  }`}>
+                    <ReactMarkdown
+                      remarkPlugins={[remarkGfm]}
+                      components={{
+                        p: ({children}) => <p className="mb-2 last:mb-0">{children}</p>,
+                        strong: ({children}) => <strong className="font-bold">{children}</strong>,
+                        ul: ({children}) => <ul className="list-disc ml-4 mb-2">{children}</ul>,
+                        ol: ({children}) => <ol className="list-decimal ml-4 mb-2">{children}</ol>,
+                        li: ({children}) => <li className="mb-1">{children}</li>,
+                        h1: ({children}) => <h1 className="text-lg font-bold mb-2">{children}</h1>,
+                        h2: ({children}) => <h2 className="text-base font-bold mb-2">{children}</h2>,
+                        h3: ({children}) => <h3 className="text-sm font-bold mb-1">{children}</h3>,
+                        code: ({children}) => <code className="bg-gray-800 text-gray-100 px-1 py-0.5 rounded text-xs">{children}</code>,
+                        pre: ({children}) => <pre className="bg-gray-800 text-gray-100 p-2 rounded mb-2 overflow-x-auto">{children}</pre>,
+                      }}
+                    >
+                      {msg.text}
+                    </ReactMarkdown>
+                  </div>
                 </div>
               </div>
             ))}
@@ -88,9 +135,14 @@ const Chat = () => {
               />
               <button
                 type="submit"
-                className="p-3 bg-primary-600 text-white rounded-full hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-transform transform hover:scale-105"
+                disabled={isLoading}
+                className="p-3 bg-primary-600 text-white rounded-full hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500 transition-transform transform hover:scale-105 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:scale-100"
               >
-                <Send className="h-5 w-5" />
+                {isLoading ? (
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                ) : (
+                  <Send className="h-5 w-5" />
+                )}
               </button>
             </form>
           </div>

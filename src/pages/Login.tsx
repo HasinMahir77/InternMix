@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, Navigate } from 'react-router-dom';
 import { Eye, EyeOff, Mail, Lock, Users } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
@@ -11,8 +11,14 @@ const Login = () => {
     password: '',
     remember: false,
   });
-  const { login } = useAuth();
+  const { login, isAuthenticated, currentUser } = useAuth();
   const navigate = useNavigate();
+
+  // Redirect if already logged in
+  if (isAuthenticated && currentUser) {
+    const destination = currentUser.user_type === 'recruiter' ? '/listings' : '/dashboard';
+    return <Navigate to={destination} replace />;
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();

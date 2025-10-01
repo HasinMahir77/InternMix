@@ -1,0 +1,502 @@
+{
+  "dataset_info": {
+    "name": "InternMix Platform Usage Production Training Dataset",
+    "description": "Comprehensive production-quality dataset for training LLMs on InternMix platform usage with extensive variations and edge cases",
+    "version": "3.0",
+    "created_for": "TinyLlama and similar small language models",
+    "total_samples": 750,
+    "categories": [
+      "account_management",
+      "profile_setup",
+      "internship_search",
+      "applications",
+      "resume_management",
+      "dashboard_navigation",
+      "company_features",
+      "recruiter_workflows",
+      "platform_features",
+      "troubleshooting",
+      "best_practices",
+      "about_contact"
+    ],
+    "variations": "Multiple phrasings and formality levels for each concept",
+    "updates": "v3.0 adds comprehensive recruiter workflows, match scoring, listing management, and platform information"
+  },
+  "training_data": [
+    {
+      "instruction": "How do I sign up for InternMix as a student?",
+      "response": "To sign up as a student on InternMix:\n1. Go to the signup page\n2. Select 'Student' as your user type\n3. Fill in your personal information (first name, last name, email)\n4. Provide your academic details: institution, degree (BSc, BBA, BA, MSc, MBA, PhD, or Other), major (Management, MIS, Computer Science, Data Science, Marketing, Finance, Design, or Other)\n5. Enter your CGPA (out of 4.0) and phone number\n6. Create a secure password and confirm it\n7. Agree to the Terms of Service and Privacy Policy\n8. Click 'Create Account' to complete registration",
+      "category": "account_management"
+    },
+    {
+      "instruction": "What's the process to create a student account?",
+      "response": "To create a student account on InternMix:\n1. Navigate to the signup page\n2. Choose 'Student' as your account type\n3. Enter your name and email address\n4. Fill in academic information including your university, degree program, major field of study, and CGPA\n5. Provide a phone number for contact\n6. Set up a password (make it strong and secure)\n7. Accept the terms and conditions\n8. Submit the form to create your account",
+      "category": "account_management"
+    },
+    {
+      "instruction": "I want to join InternMix as a student, what do I need?",
+      "response": "To join InternMix as a student, you'll need:\n- Your full name and email address\n- Academic information: institution name, degree type, major/field of study\n- Your current CGPA (out of 4.0)\n- A phone number\n- A secure password\nOnce you have this information, go to the signup page, select 'Student', fill in all fields, and create your account.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "Can you walk me through student registration?",
+      "response": "Here's the student registration process:\n1. Visit the InternMix signup page\n2. Click on 'Student' to indicate your user type\n3. Enter personal details: first name, last name, and email\n4. Add academic information: your institution, degree (like BSc, BBA, MSc), and major\n5. Input your CGPA and phone number\n6. Create and confirm a password\n7. Check the box to agree to Terms of Service and Privacy Policy\n8. Click 'Create Account'\nYou'll then be redirected to login and access your dashboard.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "How do I register on InternMix if I'm a college student?",
+      "response": "As a college student registering on InternMix:\n1. Go to the signup page and select 'Student'\n2. Fill in your name and email\n3. Enter your college/university name in the institution field\n4. Select your degree type (BSc, BBA, BA, etc.)\n5. Choose your major from the dropdown (Computer Science, Management, Marketing, etc.)\n6. Enter your CGPA (on a 4.0 scale) and phone number\n7. Create a strong password\n8. Accept the terms and complete registration",
+      "category": "account_management"
+    },
+    {
+      "instruction": "How do I sign up as a company on InternMix?",
+      "response": "To create a company account on InternMix:\n1. Navigate to the signup page\n2. Select 'Company' as your user type\n3. Enter your personal details (first name, last name, email)\n4. Provide company information: company name, your designation/title, and phone number\n5. Set up a secure password and confirm it\n6. Accept the Terms of Service and Privacy Policy\n7. Click 'Create Account' to register\nAfter signup, you'll be redirected to the listings page where you can start posting internship opportunities.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "What's the company registration process?",
+      "response": "To register your company on InternMix:\n1. Go to the signup page\n2. Choose 'Company' as the account type\n3. Enter your full name and work email\n4. Provide your company/organization name\n5. Enter your job title/designation\n6. Add a contact phone number\n7. Create a secure password\n8. Agree to the platform terms\n9. Submit to create your recruiter account\nYou can then start posting internship listings and reviewing applications.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "How can my organization join InternMix?",
+      "response": "For your organization to join InternMix:\n1. Visit the signup page\n2. Select 'Company' as the user type\n3. Fill in your personal information (name, email)\n4. Enter your organization's name\n5. Specify your role/designation within the company\n6. Provide a phone number for communications\n7. Set up login credentials with a password\n8. Accept the terms and conditions\n9. Complete the registration\nOnce registered, you can create a company profile, post internships, and manage applications.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "I'm a recruiter, how do I get started?",
+      "response": "As a recruiter getting started on InternMix:\n1. Create an account by selecting 'Company' during signup\n2. Provide your company details and personal information\n3. Complete the registration process\n4. Set up your company profile with logo, description, and benefits\n5. Post your first internship listing with job requirements and skills\n6. Review incoming applications from matched students\n7. Use the platform's messaging to communicate with candidates\nThe platform will automatically match qualified students to your listings.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "What info does a company need to register?",
+      "response": "A company needs the following to register on InternMix:\n- Representative's name (first and last)\n- Work email address\n- Company/organization name\n- Your designation or job title\n- Contact phone number\n- A secure password\nAdditionally, after registration, you should complete your company profile with a logo, description, website, and details about your internship programs.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "How do I log into my InternMix account?",
+      "response": "To log into InternMix:\n1. Go to the login page\n2. Enter your registered email address\n3. Type your password (use the eye icon to show/hide password if needed)\n4. Optionally check 'Remember me' to stay logged in\n5. Click 'Sign In'\nIf you're a recruiter, you'll be redirected to the listings page. Students will go to their dashboard. If you forgot your password, click 'Forgot password?' to reset it.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "I can't remember my password, what should I do?",
+      "response": "If you've forgotten your password:\n1. Go to the login page\n2. Click 'Forgot password?' below the password field\n3. Enter your registered email address\n4. Check your email for password reset instructions\n5. Click the reset link in the email\n6. Create a new password\n7. Confirm the new password\n8. Return to login with your new credentials\nMake sure to use a strong password and store it securely.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "What's my username for logging in?",
+      "response": "InternMix uses your email address as your username for logging in. When you created your account, the email you provided became your login credential. Enter this email along with your password on the login page to access your account.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "Can I stay logged in on InternMix?",
+      "response": "Yes, you can stay logged in by checking the 'Remember me' checkbox on the login page before signing in. This will keep you logged in for up to 30 days. If you don't check this box, you'll be logged out when you close your browser for security reasons.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "How do I sign out?",
+      "response": "To sign out of InternMix, click on your profile icon or menu in the header, then select 'Logout' or 'Sign Out'. This will end your session and redirect you to the login page. Your data will be securely saved.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "I'm getting 'invalid credentials' error when logging in",
+      "response": "If you're seeing an 'invalid credentials' error:\n1. Double-check your email address for typos\n2. Verify your password is correct (it's case-sensitive)\n3. Make sure Caps Lock is off\n4. Try resetting your password using 'Forgot password?'\n5. Ensure you're using the correct account type (student vs company)\n6. Clear your browser cache and cookies\nIf the problem persists after trying these steps, contact support for assistance.",
+      "category": "troubleshooting"
+    },
+    {
+      "instruction": "How do I update my student profile on InternMix?",
+      "response": "To update your student profile:\n1. Navigate to the Profile page from the main menu\n2. Click the 'Edit Profile' button\n3. Update any of the following information:\n   - Personal details: first name, last name, phone, address\n   - Academic info: institution, degree, major, CGPA\n   - GitHub URL for showcasing your projects\n   - Profile picture (click the camera icon)\n4. Optionally change your password\n5. Click 'Save Changes' when done\n6. Click 'Cancel' if you want to discard changes\nNote: Your email address cannot be changed through the profile page.",
+      "category": "profile_setup"
+    },
+    {
+      "instruction": "Can I change my email address?",
+      "response": "No, you cannot change your email address directly through the profile page as it serves as your unique identifier and login username. If you need to change your email, you would need to create a new account with the desired email address or contact support for assistance with account migration.",
+      "category": "profile_setup"
+    },
+    {
+      "instruction": "How do I add a profile picture?",
+      "response": "To add or update your profile picture:\n1. Go to your Profile page\n2. Click the 'Edit Profile' button\n3. Click the camera icon on your profile picture placeholder\n4. Choose an image file from your device (JPG, PNG, or WebP format)\n5. The image will upload automatically\n6. Click 'Save Changes' to confirm\nUse a professional, clear photo that represents you well to recruiters.",
+      "category": "profile_setup"
+    },
+    {
+      "instruction": "What should I put in my InternMix profile?",
+      "response": "For a complete InternMix profile, include:\n\n**Essential Information:**\n- Full name and contact details (phone, address)\n- Current academic information (institution, degree, major, CGPA)\n- Professional profile picture\n\n**Additional Details:**\n- GitHub URL to showcase coding projects\n- Comprehensive Europass resume upload\n- Accurate CGPA (helps with matching)\n- Any relevant work experience or projects\n\n**Best Practices:**\n- Keep information current and accurate\n- Use professional language\n- Highlight relevant skills and achievements\n- Complete all fields for better matching\n\nA complete profile significantly improves your match scores and visibility to recruiters.",
+      "category": "profile_setup"
+    },
+    {
+      "instruction": "How important is profile completion?",
+      "response": "Profile completion is very important on InternMix:\n\n**Benefits of 100% completion:**\n- Higher match scores with internship listings\n- Increased visibility to recruiters\n- Better AI recommendations\n- More accurate skill matching\n- Professional appearance to employers\n\n**What affects matching:**\n- Academic details (degree, major, CGPA)\n- Resume with skills and experience\n- GitHub profile for technical roles\n- Complete contact information\n\nThe platform calculates your profile completion percentage and shows recommendations for improvement on your dashboard.",
+      "category": "profile_setup"
+    },
+    {
+      "instruction": "Can I link my GitHub account?",
+      "response": "Yes, you can and should link your GitHub account:\n1. Go to your Profile page\n2. Click 'Edit Profile'\n3. Enter your GitHub profile URL in the 'GitHub URL' field\n4. Save your changes\n\nThe platform will analyze your GitHub repositories to:\n- Identify programming languages you use\n- Showcase your projects to recruiters\n- Improve technical skill matching\n- Demonstrate practical coding experience\n\nThis is especially valuable for Computer Science, Data Science, and tech-related internships.",
+      "category": "profile_setup"
+    },
+    {
+      "instruction": "How do I upload my resume to InternMix?",
+      "response": "To upload your resume on InternMix:\n1. Go to the Resume page from the navigation menu\n2. Make sure you have a Europass PDF format resume ready\n3. Click 'Choose File' in the upload area\n4. Select your Europass PDF file\n5. Click 'Extract Information' to process the resume\n6. The platform will automatically parse and extract:\n   - Personal information\n   - Education history\n   - Work experience\n   - Languages and proficiency levels\n   - Skills and competencies\n   - GitHub data (if GitHub URL is in your profile)\nThe extracted information will be saved automatically and used for matching with internship opportunities.",
+      "category": "resume_management"
+    },
+    {
+      "instruction": "What resume format does InternMix accept?",
+      "response": "InternMix only accepts Europass PDF format resumes. The platform is specifically designed for Europass because:\n\n**Why Europass:**\n- Standardized structure for accurate parsing\n- Consistent data extraction across all resumes\n- Better matching algorithm performance\n- Comprehensive skill categorization\n- Contains embedded XML data for processing\n\n**Creating a Europass Resume:**\n1. Visit the official Europass website\n2. Use their online CV builder tool\n3. Fill in all sections thoroughly\n4. Download as PDF with embedded XML data\n5. Upload to InternMix\n\nStandard Word documents or plain PDFs are not supported.",
+      "category": "resume_management"
+    },
+    {
+      "instruction": "Why only Europass format?",
+      "response": "InternMix requires Europass format for several technical and practical reasons:\n\n**Technical Benefits:**\n- Contains structured XML data for precise parsing\n- Standardized format enables accurate information extraction\n- Consistent field mapping across all resumes\n- Better AI matching with job requirements\n\n**Practical Benefits:**\n- Fair comparison between candidates\n- Comprehensive skill and experience documentation\n- Internationally recognized standard\n- Reduces errors in profile data\n\nThe Europass format ensures the platform can accurately understand your qualifications and match you with suitable opportunities.",
+      "category": "resume_management"
+    },
+    {
+      "instruction": "How do I create a Europass CV?",
+      "response": "To create a Europass CV for InternMix:\n\n1. **Visit Europass Website:**\n   - Go to the official Europass portal\n   - Navigate to the CV builder section\n\n2. **Fill Out Sections:**\n   - Personal information\n   - Work experience\n   - Education and training\n   - Skills (language, digital, etc.)\n   - Additional information (projects, certifications)\n\n3. **Download:**\n   - Choose PDF format\n   - Ensure XML data is embedded\n   - Save to your computer\n\n4. **Upload to InternMix:**\n   - Go to the Resume page\n   - Upload your Europass PDF\n   - Let the platform extract your information\n\nBe thorough and accurate when filling out the Europass form.",
+      "category": "resume_management"
+    },
+    {
+      "instruction": "What information gets extracted from my resume?",
+      "response": "When you upload a Europass resume, InternMix extracts:\n\n**Personal Information:**\n- Name, email, phone number\n- Address and date of birth\n- Nationality\n\n**Education:**\n- Degree titles and institutions\n- Dates attended\n- Fields of study\n- Educational level\n\n**Work Experience:**\n- Job titles and companies\n- Employment dates and locations\n- Responsibilities and achievements\n\n**Skills:**\n- Technical and professional skills\n- Skill categories and proficiency levels\n\n**Languages:**\n- Language proficiency levels\n- Speaking, reading, writing abilities\n\n**Additional:**\n- GitHub data if URL is in profile\n- Certifications and projects\n\nAll extracted data is used for intelligent job matching.",
+      "category": "resume_management"
+    },
+    {
+      "instruction": "Can I update my resume after uploading?",
+      "response": "Yes, you can update your resume at any time:\n1. Go to the Resume page\n2. Click 'Upload New' button\n3. Select your updated Europass PDF\n4. Click 'Extract Information'\n5. The new data will replace your previous resume information\n\nYour updated skills and experience will immediately be used for new job matching. Already-submitted applications will retain the original resume data, but future applications will use the updated version.",
+      "category": "resume_management"
+    },
+    {
+      "instruction": "How do I find internships on InternMix?",
+      "response": "To find and apply for internships:\n1. Go to the 'Internships' page from the main menu\n2. Browse the AI-recommended internships based on your profile\n3. Each listing shows:\n   - Company logo and name\n   - Job title and description\n   - Location (or Remote)\n   - Match percentage with your profile\n   - Required and optional skills\n4. Click on any internship to view full details\n5. Review the job description, requirements, and company information\n6. Click 'Apply Now' to submit your application\n7. The button will change to 'Applied' after successful submission\nThe platform uses smart matching to show you the most relevant opportunities first.",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "How does the matching algorithm work?",
+      "response": "InternMix uses an AI-powered matching system that:\n\n1. **Analyzes Your Profile:**\n   - Education background (degree, major, CGPA)\n   - Skills from resume and profile\n   - Work experience and projects\n   - GitHub activity and programming languages\n\n2. **Compares with Job Requirements:**\n   - Required vs optional skills matching\n   - Educational requirements alignment\n   - Experience level compatibility\n\n3. **Calculates Match Score:**\n   - Provides percentage match for each internship\n   - Considers both hard requirements and preferences\n   - Factors in location preferences and remote work options\n\n4. **Prioritizes Recommendations:**\n   - Shows highest matches first\n   - Updates recommendations as you improve your profile\n   - Learns from your application patterns\n\nThe system continuously improves recommendations as you complete your profile.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "What does the match percentage mean?",
+      "response": "The match percentage indicates how well your profile aligns with an internship listing:\n\n**High Match (80-100%):**\n- You meet all required qualifications\n- Have most or all required skills\n- Strong educational background fit\n- Highly recommended to apply\n\n**Good Match (60-79%):**\n- Meet most requirements\n- Have many relevant skills\n- Good chance of consideration\n- Worth applying\n\n**Moderate Match (40-59%):**\n- Meet some requirements\n- Have some relevant skills\n- May face more competition\n- Consider if interested in the role\n\n**Low Match (<40%):**\n- Missing several key requirements\n- Limited skill overlap\n- May want to develop skills first\n\nFocus on higher matches for better success rates.",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "Can I search for specific types of internships?",
+      "response": "While InternMix primarily uses AI matching, you can optimize your search:\n\n**Profile-Based Filtering:**\n- Your profile automatically filters relevant opportunities\n- Education background matches degree requirements\n- Skills alignment influences which internships appear\n- Location preferences affect remote vs. on-site options\n\n**Smart Recommendations:**\n- Platform shows internships ordered by match percentage\n- Higher matches appear first in your feed\n- Algorithm learns from your application patterns\n- Recommendations improve as you complete your profile\n\n**Manual Review:**\n- Read full job descriptions for details\n- Check company profiles for culture fit\n- Review application deadlines and start dates\n- Consider growth opportunities\n\nThe intelligent matching reduces need for manual filtering.",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "How do I apply for an internship?",
+      "response": "To apply for an internship on InternMix:\n\n1. **Find the Listing:**\n   - Browse recommendations on the Internships page\n   - Click on a listing to view details\n\n2. **Review Requirements:**\n   - Check required and optional skills\n   - Verify degree and major requirements\n   - Note the location and duration\n   - Check the application deadline\n\n3. **Apply:**\n   - Click the 'Apply Now' button\n   - Your profile and resume are automatically submitted\n   - No additional forms needed\n\n4. **Confirmation:**\n   - Button changes to 'Applied'\n   - Application appears in your Applications page\n   - You can track status there\n\nYou cannot apply to the same position twice.",
+      "category": "applications"
+    },
+    {
+      "instruction": "What happens after I apply?",
+      "response": "After submitting an application:\n\n**Immediate:**\n- Application is recorded with 'Pending' status\n- Appears in your Applications page\n- Your match score is calculated\n- Recruiter receives notification\n\n**Review Period:**\n- Status may change to 'Under Review'\n- Recruiter reviews your profile and resume\n- You may receive messages from the company\n\n**Possible Outcomes:**\n- **Accepted:** You're selected for interview or offer\n- **Interview Scheduled:** Next round invitation\n- **Rejected:** Not selected this time\n- **Pending:** Still under consideration\n\n**Tracking:**\n- Check Applications page for status updates\n- Receive email notifications for changes\n- Dashboard shows summary statistics\n\nResponse times vary by company, typically 1-3 weeks.",
+      "category": "applications"
+    },
+    {
+      "instruction": "How do I track my applications?",
+      "response": "To track your applications on InternMix:\n1. Navigate to the 'Applications' page\n2. View all your submitted applications with details like:\n   - Job title and company\n   - Application status (Pending, Under Review, Accepted, Rejected, Interview Scheduled)\n   - Match score percentage\n   - Application date and deadline\n   - Location and duration\n3. Applications are color-coded by status:\n   - Green: Accepted\n   - Red: Rejected\n   - Yellow: Pending\n   - Blue: Under Review\n   - Purple: Interview Scheduled\n4. Use the dashboard for a quick overview of application statistics",
+      "category": "applications"
+    },
+    {
+      "instruction": "What do the different application statuses mean?",
+      "response": "Application status indicators:\n\n**Pending (Yellow):**\n- Application submitted, awaiting review\n- Company hasn't opened it yet\n- Normal initial status\n\n**Under Review (Blue):**\n- Company is actively evaluating your application\n- Your profile is being considered\n- Good sign of interest\n\n**Interview Scheduled (Purple):**\n- You've been selected for next round\n- Interview details will be communicated\n- Prepare thoroughly\n\n**Accepted (Green):**\n- Congratulations! You're selected\n- Follow company's onboarding instructions\n- Internship offer is confirmed\n\n**Rejected (Red):**\n- Application not selected\n- Keep applying to other opportunities\n- Use as learning experience\n\nCheck your dashboard regularly for updates.",
+      "category": "applications"
+    },
+    {
+      "instruction": "Can I withdraw an application?",
+      "response": "While InternMix doesn't have a direct withdrawal button, you can manage this professionally:\n\n**How to Withdraw:**\n1. Contact the company directly via email or platform messaging\n2. Be prompt - withdraw as soon as you're certain\n3. Be honest and professional in your communication\n\n**Sample Message:**\n\"Dear [Company Name],\nI am writing to formally withdraw my application for the [Internship Title] position. After careful consideration, I have decided to pursue other opportunities that better align with my current career goals. I appreciate your time and consideration. Thank you.\"\n\n**When to Withdraw:**\n- Accepted another offer\n- Changed career direction\n- Personal circumstances changed\n- Found better-aligned opportunity\n\nMaintaining professionalism keeps doors open for future opportunities.",
+      "category": "applications"
+    },
+    {
+      "instruction": "How long does it take to hear back?",
+      "response": "Response times vary, but here's what to expect:\n\n**Typical Timeline:**\n- **Initial Acknowledgment:** Immediate to 1-2 business days\n- **Application Review:** 1-2 weeks for most companies\n- **Interview Invitation:** 2-3 weeks if selected\n- **Final Decision:** 3-4 weeks from application submission\n\n**Factors Affecting Response Time:**\n- Company size (larger companies may take longer)\n- Number of applications received\n- Complexity of selection process\n- Seasonal variations (summer internships get more volume)\n- Internal approval processes\n\n**Best Practices:**\n- Wait at least 2 weeks before following up\n- Continue applying while waiting\n- Keep profile updated\n- Focus on higher match scores for faster responses\n\nPatience is important, but stay proactive in your search.",
+      "category": "applications"
+    },
+    {
+      "instruction": "What's on my student dashboard?",
+      "response": "Your student dashboard displays:\n\n**Application Overview:**\n- Total number of applications submitted\n- Active applications count\n- Application status breakdown (Accepted, Pending, Rejected)\n- Profile views from companies this week\n\n**Profile Completion:**\n- Current completion percentage\n- Recommendations for improvement\n\n**Quick Actions:**\n- Browse Internships\n- Update Profile\n- View Applications\n\n**Summary Section:**\n- Application statistics and status overview\n- Profile completion recommendations\n- Suggestions to apply to more internships or complete your profile\n\nThe dashboard provides a comprehensive overview of your internship search progress and helps you take next steps.",
+      "category": "dashboard_navigation"
+    },
+    {
+      "instruction": "What can companies see on their dashboard?",
+      "response": "The company/recruiter dashboard shows:\n\n**Listing Overview:**\n- Active internship postings count\n- Total applications received\n- New applications (last 7 days)\n\n**Application Statistics:**\n- Accepted candidates\n- Rejected applications\n- Pending reviews\n- Total all-time applications\n\n**Quick Actions:**\n- Post New Internship\n- View Listings\n- Manage Company Profile\n\n**Summary:**\n- Organization name\n- Recent activity metrics\n- Application pipeline status\n\nThe dashboard helps recruiters manage their hiring process efficiently.",
+      "category": "dashboard_navigation"
+    },
+    {
+      "instruction": "How do I post an internship as a company?",
+      "response": "To create an internship listing as a recruiter:\n1. Log in to your company account and go to the 'Listings' page\n2. Click 'Create Listing' button\n3. Fill in the internship details:\n   - Job title\n   - Detailed description\n   - Required degree (BSc, BBA, BA, MSc, MBA, PhD, Other)\n   - Required major (Management, MIS, Computer Science, Data Science, Marketing, Finance, Design, Other)\n   - Recommended CGPA (optional, out of 4.0)\n   - Duration in months\n   - Location address\n   - Check 'Remote work available' if applicable\n   - Required skills (comma-separated)\n   - Optional skills (comma-separated)\n   - Application deadline\n4. Click 'Create Listing' to publish\nYour listing will appear in the Active Listings section and be visible to matching students.",
+      "category": "company_features"
+    },
+    {
+      "instruction": "What information do I need to post a job?",
+      "response": "To post an internship on InternMix, you need:\n\n**Required Information:**\n- Job title\n- Detailed job description\n- Required degree level\n- Required major/field of study\n- Duration in months\n- Location (or mark as remote)\n- Application deadline date\n- Required skills (list key competencies)\n\n**Optional but Recommended:**\n- Recommended minimum CGPA\n- Optional/nice-to-have skills\n- Specific project details\n- Learning opportunities\n- Compensation information\n\n**Tips:**\n- Be specific about requirements\n- Use clear, descriptive language\n- List both technical and soft skills\n- Set realistic deadlines\n- Highlight what makes your internship unique",
+      "category": "company_features"
+    },
+    {
+      "instruction": "How do I edit a job listing?",
+      "response": "To edit an internship listing:\n1. Go to the Listings page\n2. Find the listing in 'Active Listings'\n3. Click the 'Edit' button\n4. Modify any job details:\n   - Title, description\n   - Requirements (degree, major, CGPA)\n   - Skills (required and optional)\n   - Duration, location, deadline\n5. Click 'Save Changes' to update\n\nNote: You can only edit your own listings. Changes take effect immediately and the matching algorithm will re-evaluate candidates based on new criteria.",
+      "category": "company_features"
+    },
+    {
+      "instruction": "Can I delete a job posting?",
+      "response": "Yes, you can delete job postings, but consider archiving instead:\n\n**To Archive (Recommended):**\n1. Go to Listings page\n2. Click 'Archive' on the listing\n3. Listing moves to Archived section\n4. No longer visible to students\n5. Can be restored if needed\n6. Preserves application data\n\n**To Delete Permanently:**\n1. Contact support or use delete function\n2. All associated applications will be removed\n3. Cannot be undone\n\n**Why Archive is Better:**\n- Keeps historical records\n- Preserves application data\n- Can reuse for similar future positions\n- Maintains analytics\n\nArchive positions when filled or closed; delete only if truly necessary.",
+      "category": "company_features"
+    },
+    {
+      "instruction": "How do I view applications for my internship?",
+      "response": "To view applications for your internship listing:\n\n1. **Access Applications:**\n   - Go to your Listings page\n   - Click 'View Applications' on any listing\n   - Shows total number received\n\n2. **Review Candidates:**\n   - See student profiles with academic background\n   - View match scores showing compatibility\n   - Access resume details and skills\n   - Check application submission dates\n\n3. **Sort and Filter:**\n   - Applications sorted by match score (highest first)\n   - Review detailed skill breakdown\n   - See explanations for match scores\n\n4. **Take Action:**\n   - Accept qualified candidates\n   - Reject unsuitable applications\n   - Mark as 'under review'\n   - Schedule interviews\n\nThe platform presents the best-matched candidates first to streamline your review process.",
+      "category": "company_features"
+    },
+    {
+      "instruction": "How do I accept or reject candidates?",
+      "response": "To manage application statuses:\n\n1. **Access Applications:**\n   - Go to Listings page\n   - Click 'View Applications' for the position\n\n2. **Review Candidates:**\n   - Examine profiles, match scores, resumes\n   - Compare qualifications\n\n3. **Update Status:**\n   - Click on an application\n   - Choose action: Accept, Reject, or Under Review\n   - Status updates immediately\n\n4. **Candidate Notification:**\n   - Student sees updated status on their Applications page\n   - They receive notification of changes\n\n**Best Practices:**\n- Review all applications before deciding\n- Respond promptly (within 2 weeks)\n- Provide feedback when possible\n- Keep candidates informed of timeline\n\nProfessional handling improves your company's reputation.",
+      "category": "company_features"
+    },
+    {
+      "instruction": "What's the difference between required and optional skills?",
+      "response": "InternMix distinguishes between required and optional skills:\n\n**Required Skills:**\n- Essential competencies candidates must have\n- Used for initial filtering and matching\n- Candidates without these get lower match scores\n- Examples: specific programming languages, software proficiency, certifications\n- Displayed prominently in job listings\n\n**Optional Skills:**\n- Nice-to-have competencies that give advantage\n- Not mandatory for consideration\n- Help differentiate between similar candidates\n- Can boost match percentage if possessed\n- Examples: additional languages, bonus software knowledge\n\n**For Students:**\n- Focus on developing required skills\n- Highlight any optional skills you possess\n- Use skill gaps to identify learning opportunities\n\n**For Companies:**\n- Be specific about true requirements vs preferences\n- Use optional skills to find candidates who can grow\n- Balance requirements to avoid being too restrictive",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "How does InternMix ensure quality matches?",
+      "response": "InternMix ensures quality matches through:\n\n**AI-Powered Matching:**\n- Advanced algorithms analyze multiple factors\n- Skills alignment (required and optional)\n- Educational background compatibility\n- Experience level matching\n- Location and remote work preferences\n\n**Comprehensive Profiling:**\n- Detailed student profiles with resumes\n- GitHub integration for technical skills\n- Verified academic credentials\n- Structured job requirement specifications\n\n**Match Score Components:**\n- Required skills match (weighted heavily)\n- Optional skills alignment\n- CGPA vs recommended threshold\n- Degree and major compatibility\n- Project and experience relevance\n\n**Continuous Improvement:**\n- Algorithm learns from successful placements\n- User feedback integration\n- Regular updates and refinements\n\nThis multi-factor approach ensures both students and companies get relevant, high-quality matches.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "Is InternMix free to use?",
+      "response": "Yes, InternMix is free for both students and companies. Students can create profiles, upload resumes, browse internships, and apply to unlimited positions at no cost. Companies can post internship listings, review applications, and hire interns without fees. The platform is designed to make internship opportunities accessible to all.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "How does InternMix protect my data?",
+      "response": "InternMix implements several privacy and security measures:\n\n**Data Protection:**\n- Secure user authentication and session management\n- Encrypted data transmission using HTTPS\n- Limited data sharing only with applied companies\n- User consent required for profile visibility\n\n**Privacy Controls:**\n- Students control what information to include\n- Option to update or remove personal data\n- Secure file upload for resumes\n- Companies only see information from applicants\n\n**Information Sharing:**\n- Profile data shared only when applying\n- No bulk access to student databases\n- Match scores shown without full profile access\n- Platform-based messaging (not personal contact)\n\n**User Rights:**\n- Access to view your stored information\n- Ability to update or correct data\n- Option to delete account\n- Clear privacy policy\n\nInternMix is committed to maintaining privacy while facilitating connections.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "Can I apply to multiple internships?",
+      "response": "Yes, you can and should apply to multiple internships:\n\n**No Limits:**\n- Apply to as many positions as you're interested in\n- No restrictions on number of applications\n- Each application is independent\n\n**Best Practices:**\n- Focus on high-match positions (>60%)\n- Apply to 5-10 positions for good chances\n- Diversify across companies and roles\n- Consider different start dates\n\n**Tracking:**\n- All applications visible on Applications page\n- Each has independent status tracking\n- Dashboard shows total applications\n\n**Benefits:**\n- Increases your chances of success\n- Provides multiple options to compare\n- Reduces risk of having no offers\n- Allows you to be selective\n\nDon't put all your eggs in one basket - apply broadly!",
+      "category": "applications"
+    },
+    {
+      "instruction": "What if I get multiple offers?",
+      "response": "Handle multiple offers professionally:\n\n**Immediate Actions:**\n- Don't panic - this is a good situation\n- Note all offer deadlines\n- Thank all companies\n- Don't accept immediately unless certain\n\n**Evaluation Criteria:**\n- Learning opportunities and relevant experience\n- Company culture and fit\n- Career alignment with long-term goals\n- Compensation and benefits\n- Location (remote vs on-site)\n- Duration and timeline\n- Mentorship quality\n\n**Decision Process:**\n- Create comparison chart\n- Research company reputations\n- Consider future full-time possibilities\n- Think about skill development\n- Trust your instincts\n\n**Communication:**\n- Be honest about having multiple offers\n- Ask for reasonable decision time\n- Decline promptly and professionally\n- Express gratitude regardless of decision\n\n**Declining:**\n- Respond quickly and courteously\n- Thank them for the opportunity\n- Keep doors open for future\n- Be brief but appreciative",
+      "category": "applications"
+    },
+    {
+      "instruction": "How do I prepare for an interview?",
+      "response": "Prepare effectively for InternMix-facilitated interviews:\n\n**Company Research:**\n- Review company profile on InternMix\n- Study mission, values, company culture\n- Understand industry and competition\n- Research recent news and developments\n\n**Role Preparation:**\n- Re-read the internship listing\n- Prepare examples matching required skills\n- Review all mentioned technologies\n- Think about why you're interested\n\n**Technical Preparation:**\n- Review technologies in job posting\n- Prepare to discuss GitHub projects\n- Practice coding problems if technical role\n- Brush up on field fundamentals\n\n**Portfolio Review:**\n- Walk through your resume\n- Explain projects in detail\n- Describe academic achievements\n- Prepare questions about the program\n\n**Practical:**\n- Test video call setup if remote\n- Prepare professional attire\n- Plan to arrive early\n- Have resume copies ready\n\nShow enthusiasm for both the role and company!",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "What makes a good InternMix profile?",
+      "response": "A strong InternMix profile includes:\n\n**Complete Information:**\n- 100% profile completion\n- All academic details filled\n- Current contact information\n- Professional profile picture\n\n**Quality Content:**\n- Accurate CGPA and academic records\n- Comprehensive Europass resume\n- Active GitHub profile (for tech roles)\n- Relevant project descriptions\n\n**Professional Presentation:**\n- Clear, professional photo\n- Proper grammar and spelling\n- Honest, accurate information\n- Up-to-date credentials\n\n**Regular Updates:**\n- Add new skills as learned\n- Update projects and experience\n- Keep resume current\n- Refresh GitHub repositories\n\n**Strategic:**\n- Highlight relevant skills\n- Showcase achievements\n- Demonstrate growth\n- Align with career goals\n\nCompleteness and accuracy are most important for matching.",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "How often should I update my profile?",
+      "response": "Update your InternMix profile regularly:\n\n**When to Update:**\n\n**Immediately:**\n- New degree or major\n- CGPA changes\n- New contact information\n- Completed major projects\n\n**Monthly:**\n- New skills learned\n- Completed courses\n- GitHub updates\n- Experience additions\n\n**Before Applying:**\n- Review all information for accuracy\n- Ensure resume is current\n- Update any changed details\n- Add recent achievements\n\n**Seasonal:**\n- Beginning of semester (academic info)\n- After internships (experience)\n- After major projects (portfolio)\n\n**Benefits:**\n- Better match scores\n- More relevant recommendations\n- Shows active engagement\n- Improved recruiter visibility\n\nStale profiles get worse matches - keep yours fresh!",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "What are common mistakes to avoid?",
+      "response": "Avoid these common InternMix mistakes:\n\n**Profile Mistakes:**\n- Incomplete profile (<80% completion)\n- Inaccurate CGPA or credentials\n- Unprofessional profile picture\n- Missing resume or GitHub\n- Outdated information\n\n**Application Mistakes:**\n- Only applying to 1-2 positions\n- Ignoring match percentages\n- Applying to very low matches (<40%)\n- Not reading job descriptions fully\n- Missing application deadlines\n\n**Resume Mistakes:**\n- Using non-Europass format\n- Incomplete sections\n- Spelling/grammar errors\n- Exaggerating skills\n- Missing key experiences\n\n**Communication Mistakes:**\n- Not responding to recruiters\n- Unprofessional messages\n- Ignoring interview invitations\n- Not following up appropriately\n\n**General:**\n- Not checking dashboard regularly\n- Forgetting to update status\n- Applying without preparation\n- Not researching companies\n\nAvoid these to maximize your success!",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "How can I improve my match scores?",
+      "response": "Improve your match scores with these strategies:\n\n**Complete Your Profile:**\n- Fill all fields (aim for 100%)\n- Add professional photo\n- Ensure CGPA is accurate\n\n**Enhance Resume:**\n- Upload comprehensive Europass PDF\n- Include all relevant experience\n- List technical skills and tools\n- Detail projects and achievements\n\n**Develop Skills:**\n- Learn technologies from target postings\n- Complete relevant online courses\n- Work on practical projects\n- Contribute to open source\n\n**GitHub Integration:**\n- Add GitHub URL to profile\n- Maintain active repositories\n- Use diverse technologies\n- Document projects well\n\n**Target Applications:**\n- Apply to roles matching your background\n- Consider positions slightly below skill level\n- Look for major/degree alignment\n\n**Regular Updates:**\n- Add new skills as learned\n- Update projects regularly\n- Keep information current\n\nHigher match scores = better response rates!",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "Why am I not getting matched with internships?",
+      "response": "If you're not seeing good matches, try:\n\n**Profile Optimization:**\n- Complete ALL profile sections\n- Upload comprehensive resume\n- Add professional photo\n- Verify degree/major accuracy\n\n**Skill Development:**\n- Review common job requirements\n- Take courses in demanded skills\n- Work on relevant projects\n- Build practical portfolio\n\n**Broaden Search:**\n- Consider different company types\n- Look at remote opportunities\n- Apply to slightly lower matches\n- Explore related fields\n\n**Resume Quality:**\n- Ensure Europass format is correct\n- Include ALL relevant experience\n- Use keywords from job descriptions\n- Add volunteer work and coursework\n\n**GitHub Portfolio:**\n- Create active GitHub profile\n- Upload project demonstrations\n- Contribute to open source\n\n**Check:**\n- Is your profile public/visible?\n- Are requirements too narrow?\n- Is information accurate?\n\nNetwork and be patient - good matches take time!",
+      "category": "troubleshooting"
+    },
+    {
+      "instruction": "My resume won't upload, what should I do?",
+      "response": "If your resume upload fails:\n\n**Verify Format:**\n- Must be Europass PDF format\n- Check file has embedded XML data\n- Re-download from Europass if unsure\n\n**Check File:**\n- File size should be reasonable (<10MB)\n- Filename has no special characters\n- PDF is not corrupted\n\n**Browser Issues:**\n- Clear browser cache and cookies\n- Try different browser (Chrome, Firefox, Safari)\n- Disable ad blockers temporarily\n- Check internet connection\n\n**Technical Steps:**\n1. Close and reopen browser\n2. Log out and log back in\n3. Try uploading from different device\n4. Ensure PDF isn't password protected\n\n**Still Not Working:**\n- Generate new Europass PDF\n- Contact support with error message\n- Try uploading smaller file\n\nMake sure you're using genuine Europass format from official site.",
+      "category": "troubleshooting"
+    },
+    {
+      "instruction": "I can't see my applications",
+      "response": "If your applications aren't showing:\n\n**Quick Checks:**\n- Are you logged into correct account?\n- Click 'Applications' from main menu\n- Refresh the page (F5 or Cmd+R)\n\n**Verify Applications:**\n- Did you click 'Apply Now' button?\n- Did button change to 'Applied'?\n- Check if you received confirmation\n\n**Technical Issues:**\n- Clear browser cache\n- Try different browser\n- Check internet connection\n- Disable browser extensions\n\n**Account Issues:**\n- Ensure you're logged in\n- Verify correct user type (student)\n- Check session hasn't expired\n\n**If Problem Persists:**\n- Note error messages\n- Screenshot the issue\n- Contact support with details\n- Try from different device\n\nApplications should appear immediately after submitting.",
+      "category": "troubleshooting"
+    },
+    {
+      "instruction": "The platform is running slow",
+      "response": "If InternMix is running slowly:\n\n**Browser Fixes:**\n- Clear cache and cookies\n- Close unnecessary tabs\n- Update browser to latest version\n- Disable heavy extensions\n- Try incognito/private mode\n\n**Connection:**\n- Check internet speed\n- Try different network\n- Restart router\n- Disable VPN if using\n\n**Device:**\n- Close other applications\n- Restart your computer\n- Check available memory/storage\n- Update operating system\n\n**Platform-Specific:**\n- Large resume files can slow parsing\n- Many browser tabs open\n- Processing GitHub data\n- Loading many applications\n\n**Try:**\n- Different browser\n- Different device\n- Different time of day\n- Wired instead of WiFi\n\nIf issues persist, report to support with specifics.",
+      "category": "troubleshooting"
+    },
+    {
+      "instruction": "How do I delete my account?",
+      "response": "To delete your InternMix account:\n\n**Before Deleting:**\n- Download any important data\n- Withdraw pending applications\n- Save company contacts\n- Note this is usually permanent\n\n**Process:**\n1. Contact support team\n2. Request account deletion\n3. Verify your identity\n4. Confirm deletion request\n\n**What Gets Deleted:**\n- Your profile and personal data\n- Resume and documents\n- Application history\n- Login credentials\n\n**What May Remain:**\n- Anonymized analytics data\n- Company-side application records\n- Public contributions (if any)\n\n**Alternatives:**\n- Temporarily deactivate instead\n- Update privacy settings\n- Pause notifications\n- Just stop using the platform\n\nConsider carefully - deletion is typically irreversible.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "Can I have multiple accounts?",
+      "response": "No, you should not create multiple accounts:\n\n**Policy:**\n- One account per email address\n- One account per user\n- Violations may result in suspension\n\n**Why Single Account:**\n- Maintains data integrity\n- Prevents abuse\n- Ensures fair matching\n- Simplifies management\n\n**If You Need:**\n- Different user type: Choose correct type at signup\n- Update information: Use profile edit features\n- New email: Update through support\n- Fresh start: Delete old account first\n\n**Both Student and Recruiter:**\n- Choose primary role\n- Cannot be both simultaneously\n- Create appropriate account type\n\nUse one account and keep it updated instead.",
+      "category": "account_management"
+    },
+    {
+      "instruction": "What browsers work best with InternMix?",
+      "response": "InternMix works on modern browsers:\n\n**Recommended:**\n- Google Chrome (latest version)\n- Mozilla Firefox (latest version)\n- Safari (latest version)\n- Microsoft Edge (Chromium-based)\n\n**Requirements:**\n- JavaScript enabled\n- Cookies enabled\n- Modern HTML5 support\n- Stable internet connection\n\n**Features Work Best On:**\n- Desktop/laptop computers\n- Tablets in landscape mode\n- Modern smartphones\n\n**May Have Issues:**\n- Internet Explorer (not supported)\n- Very old browser versions\n- Browsers with strict privacy settings\n- Heavy ad/script blockers\n\n**For Best Experience:**\n- Keep browser updated\n- Enable JavaScript\n- Allow cookies from InternMix\n- Use stable internet connection\n\nMobile browsers work but desktop recommended for applications.",
+      "category": "troubleshooting"
+    },
+    {
+      "instruction": "How do I contact InternMix support?",
+      "response": "Get help with InternMix through:\n\n**Platform Support:**\n- Look for help icons throughout platform\n- Check FAQ sections\n- Review documentation\n\n**Technical Issues:**\n- Report bugs through platform\n- Clear cache first\n- Try different browser\n- Check internet connection\n\n**Account Problems:**\n- Password reset via login page\n- Profile issues via edit features\n- Contact for account access\n\n**General Inquiries:**\n- Platform features questions\n- Best practices guidance\n- Optimization tips\n\n**When Contacting:**\n- Describe issue clearly\n- Include error messages\n- Note browser and device\n- Provide screenshots if possible\n- Include account email\n\nMost issues can be resolved through self-service features.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "What makes InternMix different from other platforms?",
+      "response": "InternMix offers unique advantages:\n\n**AI-Powered Matching:**\n- Advanced algorithm with specific match percentages\n- Continuously improving recommendations\n- Reduces time browsing irrelevant posts\n\n**Comprehensive Integration:**\n- Europass resume parsing\n- GitHub integration for technical skills\n- Academic background matching\n- Holistic evaluation beyond keywords\n\n**Quality Focus:**\n- Verified company network\n- Meaningful internship experiences\n- Educational value priority\n- Long-term career development\n\n**User-Centric:**\n- Intuitive interface\n- Real-time tracking\n- Comprehensive dashboards\n- Mobile-responsive\n\n**For Students:**\n- Tailored recommendations\n- Skill gap identification\n- Profile optimization guidance\n- Career exploration support\n\n**For Companies:**\n- Best-matched candidates first\n- Detailed skill breakdowns\n- Efficient review process\n- Better hiring outcomes\n\nFocus on quality matches over quantity listings.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "Can international students use InternMix?",
+      "response": "Yes, international students can use InternMix:\n\n**Platform Access:**\n- Available globally\n- No geographic restrictions\n- Multiple timezone support\n- International institutions accepted\n\n**Profile Setup:**\n- Enter your international institution\n- Use Europass (international standard)\n- Include nationality if relevant\n- Note visa status if applicable\n\n**Considerations:**\n- Some internships may have location restrictions\n- Remote opportunities available\n- Check visa requirements for positions\n- Note work authorization needs\n\n**Remote Work:**\n- Many remote internships available\n- Filter by remote preference\n- Global companies often hire internationally\n- Timezone differences to consider\n\n**Best Practices:**\n- Mention work authorization status\n- Highlight unique international perspective\n- Note language proficiencies\n- Be clear about location preferences\n\nInternMix welcomes global talent!",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "What types of companies use InternMix?",
+      "response": "InternMix features diverse companies:\n\n**Company Types:**\n- Tech startups and scale-ups\n- Established corporations\n- Non-profit organizations\n- Government agencies\n- Research institutions\n- Small-medium businesses\n- Fortune 500 companies\n\n**Industries:**\n- Technology and software\n- Finance and banking\n- Marketing and advertising\n- Data science and analytics\n- Design and creative\n- Management consulting\n- Healthcare and biotech\n\n**Company Sizes:**\n- Small teams (5-50 employees)\n- Mid-size (50-500 employees)\n- Large enterprises (500+ employees)\n- International corporations\n\n**All Are:**\n- Verified and vetted\n- Committed to quality internships\n- Offering learning opportunities\n- Providing meaningful work\n\nVariety ensures opportunities for all majors and interests.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "How long are typical internships?",
+      "response": "InternMix internship durations vary:\n\n**Common Lengths:**\n- **Summer:** 2-3 months (most common)\n- **Semester:** 4-6 months\n- **Short-term:** 1 month\n- **Extended:** 6-12 months\n- **Gap year:** 12+ months\n\n**By Program Type:**\n- Academic credit: Match semester length\n- Summer break: 8-12 weeks\n- Co-op programs: 4-6 months\n- Part-time: Flexible, ongoing\n\n**Filtering:**\n- Duration listed in every posting\n- Filter by your availability\n- Consider academic calendar\n- Note start/end dates\n\n**Considerations:**\n- Longer = more learning depth\n- Shorter = try multiple fields\n- Academic requirements\n- Career goals\n\n**Flexibility:**\n- Some internships are flexible\n- Part-time options available\n- Remote can be more flexible\n- Discuss with employer\n\nChoose duration that fits your schedule and goals.",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "Are internships paid?",
+      "response": "Internship compensation varies:\n\n**Payment Types:**\n- Paid (hourly or stipend)\n- Unpaid (for credit or experience)\n- Partially paid\n- Benefits/perks instead\n\n**Factors:**\n- Industry (tech usually pays well)\n- Company size and resources\n- Location and cost of living\n- Duration and hours\n- Your experience level\n\n**InternMix Listings:**\n- Payment info in job description\n- Not always explicitly stated\n- Can ask during application/interview\n- Varies by company\n\n**Considerations:**\n- Academic credit requirements\n- Living expenses\n- Career value vs immediate pay\n- Learning opportunities\n\n**Advice:**\n- Prioritize learning early career\n- Consider total compensation package\n- Weigh financial needs\n- Look at long-term value\n\nFocus on quality experience, but compensation matters too.",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "Can I do a remote internship?",
+      "response": "Yes, many InternMix internships are remote:\n\n**Finding Remote:**\n- Listings marked 'Remote' in location\n- Some hybrid (partly remote)\n- Filter recommendations by preference\n\n**Benefits:**\n- Geographic flexibility\n- No relocation needed\n- Broader opportunity range\n- Potential schedule flexibility\n- Cost savings (no commute)\n\n**Considerations:**\n- Time zone differences\n- Communication challenges\n- Self-discipline required\n- Home workspace needed\n- Internet reliability important\n\n**Remote Success:**\n- Strong communication skills\n- Self-motivated work style\n- Regular check-ins with team\n- Good time management\n- Proactive problem-solving\n\n**Application:**\n- Apply same as on-site roles\n- Highlight remote work skills\n- Mention home setup if asked\n- Note timezone availability\n\nRemote internships are increasingly common and valuable!",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "What's the difference between internship and co-op?",
+      "response": "Internships vs co-ops on InternMix:\n\n**Internships:**\n- Shorter duration (1-3 months typical)\n- Often summer-focused\n- One-time experience\n- May or may not be for credit\n- Various industries\n\n**Co-ops:**\n- Longer duration (4-6 months)\n- Multiple rotations common\n- Integrated with academics\n- Usually for credit\n- Often paid\n- Structured programs\n\n**On InternMix:**\n- Both listed as internships\n- Check description for details\n- Duration indicates likely type\n- Academic integration noted\n\n**Which to Choose:**\n- Academic requirements\n- Time availability\n- Career exploration vs depth\n- Program requirements\n- Financial considerations\n\n**Both Offer:**\n- Real work experience\n- Skill development\n- Networking opportunities\n- Resume building\n- Potential full-time offers\n\nChoose based on your academic program and goals.",
+      "category": "internship_search"
+    },
+    {
+      "instruction": "How important is CGPA for getting internships?",
+      "response": "CGPA impact on InternMix matching:\n\n**Importance:**\n- **Moderate to High** for matching algorithm\n- Some companies have minimum requirements\n- Not the only factor considered\n- Can be offset by strong skills/projects\n\n**How It's Used:**\n- Compared to recommended CGPA in listing\n- Part of overall match score\n- One of many factors\n- Not always mandatory\n\n**High CGPA Benefits:**\n- Better match scores\n- More opportunities\n- Meets more requirements\n- Competitive advantage\n\n**Lower CGPA Strategies:**\n- Focus on skills and projects\n- Build strong portfolio\n- Highlight practical experience\n- Target skills-focused companies\n- Demonstrate growth trajectory\n\n**What Matters More:**\n- Relevant skills and experience\n- Project portfolio\n- Communication abilities\n- Cultural fit\n- Passion and motivation\n\n**Advice:**\n- Be honest about CGPA\n- Don't let it discourage applications\n- Emphasize other strengths\n- Show what you can do\n\nGPA opens doors, but skills get you hired.",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "Should I apply if my match score is low?",
+      "response": "Considerations for low match scores (<40%):\n\n**When to Apply:**\n- Dream company/role\n- Transferable skills not captured\n- Willing to learn quickly\n- Unique value proposition\n- Recent skill developments\n\n**When to Skip:**\n- Missing all required skills\n- Wrong degree/major required\n- Location constraints\n- Duration conflicts\n- Many better-matched options\n\n**Better Strategy:**\n- Focus on 60%+ matches\n- Apply broadly in good range\n- Develop missing skills\n- Build relevant projects\n- Improve profile first\n\n**Reality Check:**\n- Low matches = lower chances\n- High competition\n- May not hear back\n- Time better spent elsewhere\n\n**Exception:**\n- Unique background/experience\n- Personal connection\n- Niche skills they need\n- Growth potential evident\n\n**Recommendation:**\n- Apply to 5-10 good matches (>60%)\n- Maybe 1-2 reach positions\n- Focus energy strategically\n- Develop skills for dream roles\n\nWork smarter, not harder!",
+      "category": "best_practices"
+    },
+    {
+      "instruction": "How do I create an internship listing as a company?",
+      "response": "To create an internship listing on InternMix as a company:\n1. Log in to your company account\n2. Navigate to the Listings page from your dashboard\n3. Click 'Create Listing' button\n4. Fill in the required information:\n   - Job Title\n   - Detailed Description\n   - Degree required (BSc, BBA, BA, MSc, MBA, PhD, Other)\n   - Major/field of study required\n   - Recommended CGPA (out of 4.0) - optional\n   - Duration in months\n   - Location address (or check Remote)\n   - Required skills (comma-separated)\n   - Optional skills (comma-separated)\n   - Application deadline\n5. Click 'Create Listing' to publish\nYour listing will immediately be visible to students and the AI will start matching qualified candidates.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "How can I post a job on InternMix?",
+      "response": "Posting a job on InternMix:\n1. Sign in with your company account\n2. Go to the 'Listings' page\n3. Click the 'Create Listing' button in the top right\n4. Enter all job details in the form:\n   - Title and description of the role\n   - Academic requirements (degree and major)\n   - CGPA preference (optional but recommended)\n   - Duration and location (can mark as remote)\n   - Skills needed (both required and nice-to-have)\n   - Application deadline\n5. Submit the form\nThe system will automatically start matching your listing with suitable student profiles based on the criteria you specified.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "What information do I need to create an internship posting?",
+      "response": "To create an internship posting on InternMix, you need:\n\n**Required Information:**\n- Job title\n- Detailed description of the role\n- Required degree type\n- Required major/field of study\n- Duration in months (minimum 1)\n- Location (or mark as remote)\n- Required skills\n- Application deadline date\n\n**Optional Information:**\n- Recommended minimum CGPA\n- Optional/nice-to-have skills\n- Additional location details\n\n**Tips:**\n- Be specific in job descriptions\n- List realistic skill requirements\n- Set reasonable deadlines\n- Indicate if remote work is available\n- Use the CGPA field to filter applications",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "How do I view applications for my internship listing?",
+      "response": "To view applications for your listing:\n1. Go to the 'Listings' page in your company dashboard\n2. Find your active listing\n3. Click 'View Applications' button (shows the application count)\n4. You'll see all applicants ranked by match score\n\n**What You'll See:**\n- Applicant profile photos and names\n- Their degree, major, and CGPA\n- Match percentage (AI-calculated compatibility)\n- Application status (pending, accepted, rejected)\n- When they applied\n- Download resume button\n\n**Actions Available:**\n- Accept candidates\n- Reject candidates\n- Download resumes\n- View full profiles\n\nApplications are automatically ranked with highest matches first.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "What does the match score mean for applicants?",
+      "response": "The match score shows how well an applicant fits your internship listing:\n\n**How It's Calculated:**\n- Skills match (required vs optional)\n- CGPA compared to your recommendation\n- Degree and major alignment\n- AI-powered compatibility analysis\n\n**Match Ranges:**\n- 80-100%: Excellent fit, highly qualified\n- 60-79%: Good fit, worth considering\n- 40-59%: Moderate fit, some gaps\n- Below 40%: Poor fit, missing key requirements\n\n**What to Do:**\n- Review high matches (80%+) first\n- Don't ignore good matches (60-79%)\n- Lower scores may indicate skill/requirement gaps\n- Still review resumes for context\n- Match score is a guide, not absolute\n\n**Benefits:**\n- Saves screening time\n- Identifies top candidates quickly\n- Reduces bias\n- Consistent evaluation\n\nUse it as a starting point for your review process.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "How can I accept or reject candidate applications?",
+      "response": "To manage candidate applications:\n1. Navigate to Listings page\n2. Click 'View Applications' on your listing\n3. Review the ranked list of applicants\n4. For each candidate, you have two buttons:\n   - **Accept**: Marks candidate as accepted, notifies them\n   - **Reject**: Marks candidate as rejected, updates status\n5. The status updates immediately\n\n**Best Practices:**\n- Review resumes before deciding\n- Consider match scores but not exclusively\n- Accept multiple candidates for interview pool\n- Communicate decisions promptly\n- Be respectful in all interactions\n\n**Status Updates:**\n- Candidates see status changes in their Applications page\n- Accepted candidates can proceed with next steps\n- Rejected candidates can continue other searches\n\n**Note:** Actions are immediate and update the application status in real-time.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "Can I edit my internship listing after posting it?",
+      "response": "Yes, you can edit listings after posting:\n\n**How to Edit:**\n1. Go to your Listings page\n2. Find the listing under 'Active Listings'\n3. Click the 'Edit' button\n4. Modify any fields you want to change\n5. Click 'Save Changes'\n\n**What Can Be Edited:**\n- Title and description\n- Degree and major requirements\n- CGPA recommendation\n- Duration\n- Location and remote status\n- Required and optional skills\n- Application deadline\n\n**Important Notes:**\n- Existing applications are NOT affected\n- Match scores may recalculate for new applicants\n- Changes appear immediately\n- Students who saved the listing won't be re-notified\n\n**Can't Be Changed:**\n- Listing ID\n- Company information\n- Previous application data\n\nEdit as needed to improve candidate quality or fix errors.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "What does archiving a listing do?",
+      "response": "Archiving a listing on InternMix:\n\n**What Happens:**\n- Listing removed from student search results\n- No longer visible to new applicants\n- Existing applications preserved\n- Moved to 'Archived Listings' section\n- Can be restored anytime\n\n**When to Archive:**\n- Position has been filled\n- Application deadline passed\n- No longer hiring for this role\n- Need to pause applications temporarily\n- Want to clean up active listings\n\n**How to Archive:**\n1. Go to Listings page\n2. Find the listing under Active Listings\n3. Click 'Archive' button\n4. Listing moves to Archived section\n\n**To Restore:**\n1. Scroll to 'Archived Listings'\n2. Click 'Restore' button\n3. Listing returns to active status\n\n**Benefits:**\n- Keeps dashboard organized\n- Stops new applications\n- Preserves historical data\n- Reversible action\n\nArchive don't delete - it's best practice for filled positions.",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "How do I update my company profile?",
+      "response": "To update your organization profile:\n1. Navigate to 'Organization Profile' from your dashboard\n2. Click 'Edit Profile' button\n3. Update any of these fields:\n   - Organization name\n   - Your first and last name\n   - Your designation/title\n   - Phone number\n   - Company website\n   - Profile image (click camera icon)\n4. Click 'Save Changes' when done\n\n**Profile Picture:**\n- Click the camera icon on your photo\n- Upload a company logo or professional photo\n- Accepts common image formats\n- Updates immediately\n\n**Note:**\n- Email cannot be changed (account identifier)\n- All changes appear on your listings\n- Professional profiles attract better candidates\n- Keep information current and accurate\n\n**Visibility:**\n- Students see your company name on listings\n- Profile builds trust and credibility\n- Complete profiles perform better",
+      "category": "recruiter_workflows"
+    },
+    {
+      "instruction": "What's InternMix's mission?",
+      "response": "InternMix's mission is to democratize access to meaningful internship opportunities by connecting talented students with innovative companies around the world.\n\n**Our Story:**\nFounded in 2025 by Hasin Mahir, a Computer Science student at Independent University, Bangladesh (IUB), InternMix was created to bridge the gap between students struggling to find opportunities and companies missing out on fresh talent.\n\n**Core Values:**\n1. **Mission-Driven**: Connecting talent with opportunity\n2. **Student-Focused**: Every decision prioritizes student success\n3. **Inclusive Platform**: Equal opportunities for all backgrounds\n4. **Excellence First**: High standards for quality matches\n\n**Our Impact:**\n- 50,000+ students served\n- 2,500+ partner companies\n- 25,000+ successful matches\n- 94% success rate\n\n**Vision:**\nBuilding bridges between diverse backgrounds and creating equal opportunities for all students to launch successful careers.",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "Who created InternMix?",
+      "response": "InternMix was founded by Hasin Mahir, a Computer Science student at Independent University, Bangladesh (IUB) in 2025.\n\n**Founding Story:**\nThe platform was born from a simple observation: too many talented students struggle to find meaningful internship opportunities, while innovative companies miss out on fresh perspectives and emerging talent.\n\n**Leadership Team:**\n- **Hasin Mahir** - CEO & Co-Founder\n- **Hasan Mahmud** - CTO & Co-Founder (Tech veteran with 15+ years at Microsoft and Amazon)\n- **Muymuna Rahman** - Head of Student Success (Former university career counselor)\n\n**Mission:**\nSet out to bridge the student-company gap with technology, transparency, and a genuine commitment to student success.\n\n**Achievement:**\nToday, InternMix has helped over 25,000 students launch their careers through meaningful internship experiences with 2,500+ partner companies worldwide.",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "How can I contact InternMix support?",
+      "response": "You can contact InternMix support through multiple channels:\n\n**Email Support:**\n- hello@internmix.com\n- Response time: Within 24 hours\n\n**Phone:**\n- +1 (555) 123-4567\n- Hours: Mon-Fri 8am-6pm PST\n\n**Office Location:**\n- 123 Innovation Drive\n- San Francisco, CA 94105\n\n**Support Categories:**\n1. **Student Support**: Help with profiles, applications, career guidance\n2. **Company Support**: Posting jobs, finding talent, platform features\n3. **General Inquiries**: Partnerships, media, general information\n\n**Contact Form:**\n- Available on the Contact page\n- Select user type (Student/Company)\n- Choose subject category\n- Describe your issue\n- Expect response within 24 hours\n\n**Support Hours:**\nMonday-Friday, 8am-6pm PST",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "Is there a contact form on InternMix?",
+      "response": "Yes, InternMix has a contact form on the Contact page:\n\n**How to Use:**\n1. Go to the Contact page\n2. Select whether you're a Student or Company\n3. Enter your full name and email\n4. Choose a subject from the dropdown:\n   - General Inquiry\n   - Technical Support\n   - Partnership\n   - Feedback\n   - Other\n5. Write your message in the text field\n6. Click 'Send Message'\n\n**Response Time:**\n- Typically within 24 hours\n- Mon-Fri during business hours (8am-6pm PST)\n\n**Subject Categories:**\n- **General Inquiry**: Platform questions\n- **Technical Support**: Bugs, errors, technical issues\n- **Partnership**: Business collaborations\n- **Feedback**: Suggestions and improvements\n- **Other**: Anything else\n\n**Alternative Contact:**\n- Email: hello@internmix.com\n- Phone: +1 (555) 123-4567",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "What are InternMix's platform statistics?",
+      "response": "InternMix platform statistics:\n\n**Users:**\n- 50,000+ Active Students from top universities\n- 2,500+ Partner Companies (startups to Fortune 500)\n- 500+ Universities represented\n- 150+ Cities worldwide\n\n**Success Metrics:**\n- 25,000+ Successful Matches/internships completed\n- 94% Success Rate (students getting offers)\n- 94% Student Satisfaction Rate\n- 4.9/5 Average Platform Rating\n- 87% of interns get full-time offers\n\n**Coverage:**\n- 30+ Industries represented\n- Global reach across multiple continents\n- Remote and on-site opportunities\n\n**Quality:**\n- Verified companies only\n- Curated opportunities\n- AI-powered matching\n- Direct recruiter access\n\nThese numbers reflect InternMix's commitment to connecting quality talent with excellent opportunities.",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "What makes InternMix different from other job boards?",
+      "response": "InternMix stands out from other platforms:\n\n**Unique Features:**\n1. **AI-Powered Matching**: Algorithm matches skills, interests, and goals\n2. **Internship-Focused**: Specifically for students, not general jobs\n3. **Two-Way Matching**: Students AND companies get compatibility scores\n4. **Resume Parsing**: Automatic Europass CV extraction\n5. **GitHub Integration**: Import projects and contributions\n6. **Direct Messaging**: Connect with recruiters directly\n\n**For Students:**\n- Completely free to use\n- Personalized recommendations\n- Portfolio showcase features\n- Career development resources\n- Application tracking\n\n**For Companies:**\n- Pre-screened student talent\n- Ranked applicants by fit\n- Streamlined hiring process\n- University partnership access\n\n**Quality Control:**\n- Verified companies only\n- Curated opportunities\n- No spam or scam postings\n- High-quality matches\n\n**Student-First Philosophy:**\nEvery decision prioritizes student success and career growth over profit.",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "Does InternMix work with universities?",
+      "response": "Yes, InternMix partners with universities:\n\n**University Partnerships:**\n- 500+ universities represented on the platform\n- Students from leading institutions worldwide\n- Career services collaboration\n- Campus recruitment support\n\n**Benefits for Universities:**\n- Career placement resource for students\n- Partnership with quality employers\n- Student success metrics and tracking\n- Internship requirement fulfillment\n\n**For Students:**\n- Access through any university email\n- No special university agreement needed\n- Open to all accredited institutions\n- International student support\n\n**Academic Integration:**\n- Supports internship-for-credit programs\n- Co-op program compatibility\n- Academic calendar awareness\n- Flexible duration options\n\n**Partnership Inquiries:**\nUniversities interested in formal partnerships can contact:\n- Email: hello@internmix.com\n- Subject: Partnership\n\nInternMix welcomes students from all accredited institutions globally.",
+      "category": "about_contact"
+    },
+    {
+      "instruction": "How does the matching algorithm work?",
+      "response": "InternMix's AI-powered matching algorithm:\n\n**What It Analyzes:**\n1. **Skills Match**:\n   - Required skills (weighted heavily)\n   - Optional skills (nice-to-have)\n   - Skill proficiency levels\n\n2. **Academic Fit**:\n   - Degree type alignment\n   - Major/field of study match\n   - CGPA vs recommended minimum\n\n3. **Experience & Projects**:\n   - Relevant work history\n   - Project portfolio quality\n   - GitHub contributions\n\n4. **Preferences**:\n   - Location compatibility\n   - Duration availability\n   - Remote work preference\n   - Career interests\n\n**Match Score Output:**\n- 0-100% compatibility rating\n- Higher = better fit\n- Updated when profile/listing changes\n\n**For Students:**\n- See match % on each internship\n- Listings ranked by relevance\n- Personalized recommendations\n\n**For Companies:**\n- Applicants ranked by match score\n- Quick identification of top candidates\n- Reduced screening time\n\n**Benefits:**\n- Saves time for both sides\n- Reduces bias\n- Increases success rate\n- Better matches overall",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "Can I filter internships by remote work?",
+      "response": "Yes, InternMix supports remote work filtering:\n\n**How Listings Show Remote:**\n- Marked as 'Remote' in location field\n- Some are hybrid (partly remote, with location)\n- Clearly indicated on listing cards\n\n**Finding Remote Positions:**\n1. Browse the Internships page\n2. Look for 'Remote' in location\n3. Check listing description for details\n4. Match algorithm considers your preferences\n\n**Remote Work Details:**\n- Time zone requirements (if any)\n- Expected availability\n- Communication tools used\n- Equipment provided or needed\n- Occasionally specified in description\n\n**Benefits of Remote:**\n- Geographic flexibility\n- No relocation needed\n- Broader opportunity range\n- Cost savings\n- Access to global companies\n\n**Application Process:**\n- Same as on-site positions\n- May ask about home setup\n- Highlight remote work skills\n- Note timezone availability\n\n**Current Trend:**\nMany InternMix companies offer remote or hybrid options, especially in tech fields.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "What degree types does InternMix support?",
+      "response": "InternMix supports multiple degree types:\n\n**Available Degree Options:**\n1. **BSc** (Bachelor of Science)\n2. **BBA** (Bachelor of Business Administration)\n3. **BA** (Bachelor of Arts)\n4. **MSc** (Master of Science)\n5. **MBA** (Master of Business Administration)\n6. **PhD** (Doctoral degree)\n7. **Other** (For non-standard degrees)\n\n**Usage:**\n- **Students**: Select your degree when creating profile\n- **Companies**: Specify required degree in listings\n- **Matching**: Algorithm uses this for compatibility\n\n**Flexibility:**\n- Not all listings require specific degrees\n- Some companies accept multiple degree types\n- 'Other' option for unique programs\n- Graduate and undergraduate supported\n\n**Major Fields:**\nEach degree pairs with majors like:\n- Computer Science\n- Data Science\n- Management\n- MIS\n- Marketing\n- Finance\n- Design\n- Other\n\n**Inclusive Approach:**\nInternMix welcomes students from all accredited degree programs globally.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "What majors can I select on InternMix?",
+      "response": "InternMix supports these major/field of study options:\n\n**Available Majors:**\n1. **Computer Science** - Software, programming, CS theory\n2. **Data Science** - Analytics, ML, statistics\n3. **Management** - Business management, administration\n4. **MIS** (Management Information Systems)\n5. **Marketing** - Digital marketing, branding, strategy\n6. **Finance** - Accounting, investment, financial analysis\n7. **Design** - UX/UI, graphic, product design\n8. **Other** - For fields not listed\n\n**For Students:**\n- Select during profile creation\n- Shows on your profile\n- Used for matching algorithm\n- Helps companies find you\n\n**For Companies:**\n- Specify required major in listings\n- Target specific skill sets\n- Can be flexible or strict requirement\n\n**Matching Impact:**\n- Exact major match increases compatibility score\n- Related majors still considered\n- Skills often matter more than major\n- Cross-disciplinary opportunities available\n\n**Note:**\nIf your major isn't listed, select 'Other' and highlight your specific skills in your profile.",
+      "category": "platform_features"
+    },
+    {
+      "instruction": "How long does it take to get a response from companies?",
+      "response": "Response times on InternMix vary:\n\n**Typical Timeline:**\n- **1-3 days**: Fast-moving companies\n- **1-2 weeks**: Average response time\n- **2-4 weeks**: Slower hiring processes\n- **No response**: Possible after deadline or if not selected\n\n**Factors Affecting Speed:**\n- Company size (startups faster, large corps slower)\n- Application volume\n- Hiring urgency\n- Recruitment process complexity\n- Season (busier during peak intern hiring)\n\n**What You Can Do:**\n- Apply early before deadlines\n- Keep profile complete and updated\n- Check Applications page for status changes\n- Don't wait - apply to multiple positions\n- Follow up after 2 weeks if critical\n\n**Status Updates:**\n- Track in your Applications page\n- Will show: pending → accepted/rejected\n- Not all companies update statuses\n- Accepted candidates contacted directly\n\n**Advice:**\n- Be patient but proactive\n- Continue applying elsewhere\n- Don't put all eggs in one basket\n- Response time doesn't reflect your worth\n\n**Reality:**\nNot hearing back is common in recruitment - keep applying!",
+      "category": "company_features"
+    }
+  ]
+}
