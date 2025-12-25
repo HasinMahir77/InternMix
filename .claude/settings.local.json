@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(\"C:\\\\Users\\\\hasin\\\\miniconda3\\\\envs\\\\vlm\\\\python.exe\":*)",
+      "Bash(\"C:\\\\Users\\\\hasin\\\\miniconda3\\\\envs\\\\vlm\\\\python.exe\" update_profile_images.py)",
+      "Bash(\"C:\\\\Users\\\\hasin\\\\miniconda3\\\\envs\\\\vlm\\\\python.exe\" update_local_images.py)"
+    ]
+  }
+}
